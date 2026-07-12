@@ -36,11 +36,11 @@ export function ResultPanel({ result, onReset }: ResultPanelProps) {
         predictedClass={result.predicted_class}
       />
 
-      <p className="font-mono text-xs text-glow/40">
+      <p className="font-mono text-xs text-glow/70">
         {result.model_name} · v{result.model_version}
       </p>
 
-      <p className="text-xs leading-relaxed text-glow/50">{DISCLAIMER}</p>
+      <p className="text-xs leading-relaxed text-glow/75">{DISCLAIMER}</p>
 
       <button
         type="button"

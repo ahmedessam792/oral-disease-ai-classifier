@@ -9,7 +9,7 @@ export function Footer() {
           {DISCLAIMER} If you have concerns about your oral health, consult a
           dentist or physician.
         </p>
-        <p className="mt-6 font-mono text-xs text-glow/40">
+        <p className="mt-6 font-mono text-xs text-glow/70">
           oral-disease-ai-classifier · academic deep-learning project
         </p>
       </div>

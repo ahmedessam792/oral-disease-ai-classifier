@@ -107,7 +107,7 @@ export function Classifier() {
             <p className="font-mono text-[0.8125rem] uppercase tracking-[0.14em] text-glow/70">
               Viewing surface
             </p>
-            <p className="font-mono text-xs text-glow/40">
+            <p className="font-mono text-xs text-glow/70">
               JPG · PNG · WEBP · BMP
             </p>
           </div>

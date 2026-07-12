@@ -29,7 +29,7 @@ export function StatusPanel({ phase, error, canAnalyze, onAnalyze, onReset }: St
 
       <div className="flex flex-1 flex-col justify-center gap-4 py-6">
         {phase === "empty" && !error && (
-          <p className="text-sm leading-relaxed text-glow/60">
+          <p className="text-sm leading-relaxed text-glow/75">
             When you analyze an image, the predicted class, confidence score,
             and full probability distribution will appear here.
           </p>

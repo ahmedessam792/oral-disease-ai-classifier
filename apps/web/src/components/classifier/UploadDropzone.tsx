@@ -38,7 +38,7 @@ export function UploadDropzone({ onFileSelected }: UploadDropzoneProps) {
       <ImageUp aria-hidden="true" size={28} strokeWidth={1.5} className="text-glow/60" />
       <div>
         <p className="text-glow">Drop an oral image here</p>
-        <p className="mt-1 text-sm text-glow/50">
+        <p className="mt-1 text-sm text-glow/70">
           Photographs of teeth, gums, or oral tissue
         </p>
       </div>
@@ -49,7 +49,7 @@ export function UploadDropzone({ onFileSelected }: UploadDropzoneProps) {
       >
         Browse files
       </button>
-      <p className="font-mono text-xs text-glow/40">
+      <p className="font-mono text-xs text-glow/70">
         {ACCEPTED_EXTENSIONS.join(" ")} · up to {DEFAULT_MAX_UPLOAD_MB} MB
       </p>
       <input
