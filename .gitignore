@@ -53,6 +53,7 @@ Thumbs.db
 
 # --- Claude Code local state ---
 .claude/settings.local.json
+.claude/scheduled_tasks.lock
 
 # --- Logs & temp ---
 *.log
