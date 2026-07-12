@@ -1,0 +1,59 @@
+# --- Secrets & environment ---
+.env
+.env.*
+!.env.example
+
+# --- Model artifacts & datasets (placed manually, never committed) ---
+model/*
+!model/.gitkeep
+!model/README.md
+!model/metadata.example.json
+!model/labels.example.json
+datasets/
+data/
+uploads/
+*.keras
+*.h5
+*.pt
+*.pth
+*.onnx
+saved_model/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+
+# --- Node / Next.js ---
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# --- Playwright ---
+e2e/test-results/
+e2e/playwright-report/
+e2e/blob-report/
+e2e/.playwright/
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# --- Claude Code local state ---
+.claude/settings.local.json
+
+# --- Logs & temp ---
+*.log
+tmp/
+temp/

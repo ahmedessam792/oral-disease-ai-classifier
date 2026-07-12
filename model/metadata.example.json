@@ -1,0 +1,14 @@
+{
+  "model_name": "REPLACE_ME e.g. OralNet-CustomCNN",
+  "model_version": "REPLACE_ME e.g. 1.0.0",
+  "framework": "tensorflow",
+  "model_path": "REPLACE_ME e.g. oral_disease_model.keras",
+  "input_width": 224,
+  "input_height": 224,
+  "channels": 3,
+  "color_mode": "rgb",
+  "preprocessing": "resize",
+  "normalization": "0-1",
+  "confidence_threshold": 0.5,
+  "max_upload_mb": 10
+}

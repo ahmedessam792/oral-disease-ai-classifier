@@ -1,0 +1,7 @@
+{
+  "_comment": "Ordered array matching the model's output indices. Export the exact order from training (e.g. list(train_generator.class_indices.keys())). Do NOT guess.",
+  "labels": [
+    "REPLACE_WITH_CLASS_AT_INDEX_0",
+    "REPLACE_WITH_CLASS_AT_INDEX_1"
+  ]
+}
