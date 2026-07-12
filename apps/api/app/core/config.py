@@ -6,8 +6,11 @@ from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# apps/api/app/core/config.py -> repo root is 4 levels up from app/
-REPO_ROOT = Path(__file__).resolve().parents[4]
+# Repo layout: apps/api/app/core/config.py -> repo root is 5 levels up.
+# Inside the Docker image the tree is shallower (/app/app/core/config.py) and
+# MODEL_DIR is always provided via env, so fall back safely instead of crashing.
+_PARENTS = Path(__file__).resolve().parents
+REPO_ROOT = _PARENTS[4] if len(_PARENTS) > 4 else _PARENTS[-1]
 
 
 class Settings(BaseSettings):
