@@ -1,0 +1,33 @@
+# Local full-stack: FastAPI (mock mode unless model/ has a real model) + Next.js
+#   docker compose up --build
+# Web: http://localhost:3000   API: http://localhost:8000
+
+services:
+  api:
+    build: ./apps/api
+    environment:
+      APP_ENV: development # mock mode allowed; set to production once a real model is mounted
+      CORS_ORIGINS: http://localhost:3000
+      API_PORT: "7860"
+      MODEL_DIR: /app/model
+    ports:
+      - "8000:7860"
+    volumes:
+      - ./model:/app/model:ro
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request;urllib.request.urlopen('http://127.0.0.1:7860/health')\""]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: ./apps/web
+      args:
+        # Inlined at build time; the browser calls the API directly.
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy

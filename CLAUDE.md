@@ -21,6 +21,8 @@ Monorepo: Next.js frontend (`apps/web`) + FastAPI backend (`apps/api`) + drop-in
 
 ## Conventions
 
+- Next.js 16 has breaking changes vs. older training data — consult the bundled docs in `apps/web/node_modules/next/dist/docs/` before using unfamiliar Next APIs.
+
 - Backend layering: routes → services → adapters. Routes never import TensorFlow; ML frameworks are touched only inside `app/adapters/` behind optional imports.
 - The public API contract (`docs/API_CONTRACT.md`) is frozen: `predicted_class`, `confidence`, `probabilities`, `model_name`, `model_version` (+ `mock` flag in mock mode). Frontend types in `apps/web/src/lib/types.ts` must mirror backend schemas.
 - Model behavior is config-driven via `model/metadata.json` + `model/labels.json` (examples in `model/*.example.json`).
