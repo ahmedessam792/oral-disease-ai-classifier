@@ -1,0 +1,8 @@
+# Install ONLY after the final Keras model is placed in model/
+# (see model/README.md). Kept separate so development/mock mode and
+# CI stay lightweight.
+#
+# For the Docker/Hugging Face Spaces image, tensorflow-cpu is smaller
+# and sufficient for CPU inference:
+#   pip install "tensorflow-cpu>=2.16,<3"
+tensorflow>=2.16,<3
