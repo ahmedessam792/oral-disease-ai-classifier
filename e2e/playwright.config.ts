@@ -23,8 +23,11 @@ export default defineConfig({
   ],
   webServer: [
     {
+      // Windows dev machines use the project venv; CI installs into system python.
       command:
-        "cd ../apps/api && .venv\\Scripts\\python.exe -m uvicorn app.main:app --port 8000",
+        process.platform === "win32"
+          ? "cd ../apps/api && .venv\\Scripts\\python.exe -m uvicorn app.main:app --port 8000"
+          : "cd ../apps/api && python -m uvicorn app.main:app --port 8000",
       url: "http://localhost:8000/health",
       reuseExistingServer: true,
       timeout: 60_000,
