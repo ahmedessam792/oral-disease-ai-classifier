@@ -8,4 +8,9 @@ router = APIRouter()
 @router.get("/health", response_model=HealthResponse, tags=["health"])
 def health(request: Request) -> HealthResponse:
     state = request.app.state.model_state
-    return HealthResponse(status="ok", model_loaded=state.is_ready, mode=state.mode)
+    return HealthResponse(
+        status="ok",
+        model_loaded=state.is_ready,
+        mode=state.mode,
+        error_code=state.error_code,
+    )

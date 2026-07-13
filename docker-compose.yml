@@ -1,15 +1,24 @@
-# Local full-stack: FastAPI (mock mode unless model/ has a real model) + Next.js
+# Local full-stack: FastAPI (real ResNet50V2) + Next.js
 #   docker compose up --build
-# Web: http://localhost:3000   API: http://localhost:8000
+# Web: http://localhost:3000   API: http://localhost:8000   Docs: :8000/docs
+#
+# The model directory is mounted read-only, so the real model is served without
+# ever being baked into an image or committed to git.
 
 services:
   api:
     build: ./apps/api
     environment:
-      APP_ENV: development # mock mode allowed; set to production once a real model is mounted
+      APP_ENV: production
+      # auto: serve the real model because model/ contains it. Set to "mock"
+      # for a TF-free development container (mock is refused in production).
+      MODEL_MODE: auto
+      MODEL_DIR: /app/model
+      MODEL_PATH: oral_disease_resnet50v2_deployment.keras
+      MODEL_CONFIG_PATH: class_config.json
+      MODEL_VERSION: "1.0.0"
       CORS_ORIGINS: http://localhost:3000
       API_PORT: "7860"
-      MODEL_DIR: /app/model
     ports:
       - "8000:7860"
     volumes:
@@ -18,7 +27,9 @@ services:
       test: ["CMD-SHELL", "python -c \"import urllib.request;urllib.request.urlopen('http://127.0.0.1:7860/health')\""]
       interval: 15s
       timeout: 5s
-      retries: 5
+      retries: 10
+      # ResNet50V2 takes ~10-20s to load; don't fail the container while it does.
+      start_period: 90s
 
   web:
     build:

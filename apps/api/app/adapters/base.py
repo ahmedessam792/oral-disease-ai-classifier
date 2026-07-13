@@ -18,6 +18,11 @@ class ModelLoadError(Exception):
     """Raised when a model cannot be loaded; the app degrades safely."""
 
 
+class ModelOutputError(Exception):
+    """The model produced an output the service refuses to serve: wrong length,
+    NaN/inf, or not a probability distribution. Never silently corrected."""
+
+
 class ModelAdapter(ABC):
     def __init__(self, metadata: ModelMetadata, labels: list[str], model_dir: Path) -> None:
         self.metadata = metadata

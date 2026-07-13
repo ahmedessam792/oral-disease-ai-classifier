@@ -7,4 +7,9 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q"
+# The real-model tests load a 350 MB Keras model; keep them out of the default
+# run. Use `pytest -m real_model` to exercise the trained model.
+addopts = "-q -m 'not real_model'"
+markers = [
+    "real_model: loads the real .keras model and the sample images (slow, needs TensorFlow)",
+]

@@ -4,9 +4,14 @@
 !.env.example
 
 # --- Model artifacts & datasets (placed manually, never committed) ---
+# The 350 MB .keras weights and the held-out sample images stay out of git.
+# class_config.json is the exception: it is a few hundred bytes of plain config
+# (class names, input size, pixel range) and the app + tests need it to resolve
+# labels without the weights.
 model/*
 !model/.gitkeep
 !model/README.md
+!model/class_config.json
 !model/metadata.example.json
 !model/labels.example.json
 datasets/

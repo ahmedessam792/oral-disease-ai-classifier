@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request, UploadFile
+from starlette.concurrency import run_in_threadpool
 
 from app.core.errors import model_not_available
 from app.schemas.prediction import PredictionResponse
@@ -21,5 +22,9 @@ async def predict(request: Request, file: UploadFile) -> PredictionResponse:
         content_type=file.content_type,
         max_upload_mb=state.metadata.max_upload_mb,
     )
+
+    # Preprocessing + inference are CPU-bound (~hundreds of ms on the real
+    # ResNet50V2). Run them in the threadpool so a request never blocks the
+    # event loop for other clients.
     # Everything stays in memory; nothing is written to disk or logged.
-    return run_prediction(state, image)
+    return await run_in_threadpool(run_prediction, state, image)

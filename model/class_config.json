@@ -1,0 +1,20 @@
+{
+    "model": "ResNet50V2",
+    "image_size": [
+        224,
+        224
+    ],
+    "classes": [
+        "Calculus",
+        "Caries",
+        "Gingivitis",
+        "Hypodontia",
+        "Mouth Ulcer",
+        "Tooth Discoloration"
+    ],
+    "pixel_range": [
+        0,
+        255
+    ],
+    "preprocessing": "Built into the model"
+}

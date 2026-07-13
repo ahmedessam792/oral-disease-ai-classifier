@@ -22,7 +22,11 @@ def _resize(image: Image.Image, metadata: ModelMetadata) -> Image.Image:
 
 
 def preprocess_image(image: Image.Image, metadata: ModelMetadata) -> np.ndarray:
-    """PIL image -> float32 batch of shape (1, H, W, C)."""
+    """PIL image -> float32 batch of shape (1, H, W, C).
+
+    Every step is driven by the model's config (model/class_config.json), so
+    the pipeline follows the model rather than the other way around.
+    """
     # Respect camera orientation before anything else.
     image = ImageOps.exif_transpose(image)
 
@@ -41,6 +45,15 @@ def preprocess_image(image: Image.Image, metadata: ModelMetadata) -> np.ndarray:
         array = array / 255.0
         if metadata.channels == 3:
             array = (array - IMAGENET_MEAN) / IMAGENET_STD
-    # "none": raw 0-255 floats (e.g. models with a built-in Rescaling layer)
+    # "none": pixels stay in 0-255. This is what the real ResNet50V2 wants —
+    # it carries its own Rescaling(1/127.5, offset=-1) layer, so scaling here
+    # would double-normalize the input and corrupt every prediction.
 
-    return array[np.newaxis, ...]
+    batch = array[np.newaxis, ...]
+
+    expected = (1, metadata.input_height, metadata.input_width, metadata.channels)
+    if batch.shape != expected or batch.dtype != np.float32:
+        raise ValueError(
+            f"Preprocessing produced {batch.shape}/{batch.dtype}, expected {expected}/float32."
+        )
+    return batch

@@ -39,7 +39,11 @@ class ModelInfoResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: str
     model_loaded: bool
-    mode: str  # "real" | "mock" | "unavailable"
+    # "real" | "mock" | "unavailable" | "model_load_failed"
+    mode: str
+    # Short, safe reason when the model isn't serving (e.g. MODEL_LOAD_FAILED).
+    # Never carries paths, stack traces, or model internals.
+    error_code: str | None = None
 
     model_config = ConfigDict(protected_namespaces=())
 

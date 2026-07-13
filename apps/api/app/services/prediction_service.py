@@ -2,6 +2,7 @@
 
 from PIL import Image
 
+from app.adapters.base import ModelOutputError
 from app.core.errors import ApiError
 from app.core.logging import get_logger
 from app.schemas.prediction import PredictionResponse
@@ -15,13 +16,20 @@ def run_prediction(state: ModelState, image: Image.Image) -> PredictionResponse:
     assert state.adapter is not None and state.metadata is not None  # guarded by route
 
     batch = preprocess_image(image, state.metadata)
-    probabilities = state.adapter.predict(batch)
+
+    try:
+        probabilities = state.adapter.predict(batch)
+    except ModelOutputError as exc:
+        # A model/config mismatch (wrong class count, NaN, non-softmax output).
+        # Detail goes to the logs; the client gets a generic error.
+        logger.error("prediction_output_rejected detail=%s", exc)
+        raise ApiError(500, "INTERNAL_ERROR", "An unexpected error occurred.") from exc
 
     if len(probabilities) != len(state.labels):
-        # Configuration bug (labels.json out of sync with the model head).
         logger.error(
             "prediction_shape_mismatch outputs=%d labels=%d",
-            len(probabilities), len(state.labels),
+            len(probabilities),
+            len(state.labels),
         )
         raise ApiError(500, "INTERNAL_ERROR", "An unexpected error occurred.")
 

@@ -1,8 +1,13 @@
-# Install ONLY after the final Keras model is placed in model/
-# (see model/README.md). Kept separate so development/mock mode and
-# CI stay lightweight.
+# TensorFlow/Keras runtime — required only for real-model inference.
+# Kept out of requirements.txt so mock mode, CI, and the fast test suite
+# stay lightweight (no 600 MB download).
 #
-# For the Docker/Hugging Face Spaces image, tensorflow-cpu is smaller
-# and sufficient for CPU inference:
-#   pip install "tensorflow-cpu>=2.16,<3"
-tensorflow>=2.16,<3
+#   Local (Windows/macOS dev):  pip install -r requirements-tf.txt
+#   Docker/Linux (smaller):     the API Dockerfile installs tensorflow-cpu
+#                               instead of tensorflow — same Keras, no CUDA.
+#
+# keras is pinned to the exact version the deployment model was saved with
+# (model archive metadata reports keras_version 3.13.2). TensorFlow 2.21
+# uses Keras 3 as its frontend, so the two are installed side by side.
+tensorflow==2.21.0
+keras==3.13.2
