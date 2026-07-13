@@ -1,7 +1,9 @@
 "use client";
 
+import { RotateCcw } from "lucide-react";
 import type { PredictionResponse } from "@/lib/types";
 import { DISCLAIMER } from "@/lib/config";
+import { ConfidenceRing } from "./ConfidenceRing";
 import { MockBanner } from "./MockBanner";
 import { ProbabilityList } from "./ProbabilityList";
 
@@ -14,41 +16,66 @@ export function ResultPanel({ result, onReset }: ResultPanelProps) {
   const confidencePercent = (result.confidence * 100).toFixed(1);
 
   return (
-    <div className="flex flex-1 flex-col gap-4" data-testid="result-panel">
-      <p className="font-mono text-[0.8125rem] uppercase tracking-[0.14em] text-glow/70">
+    <div className="reveal flex flex-1 flex-col gap-5" data-testid="result-panel">
+      <p className="font-mono text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-scan">
         AI classification result
       </p>
 
       {result.mock && <MockBanner />}
 
-      <div>
-        <p className="font-display text-3xl text-glow">
-          <span aria-hidden="true" className="mr-2 inline-block h-2.5 w-2.5 rounded-full bg-rose align-middle" />
-          {result.predicted_class}
-        </p>
-        <p className="mt-2 font-mono text-sm text-glow/70">
-          confidence {confidencePercent}%
-        </p>
+      {/* Primary result: the class, dialled against its confidence. */}
+      <div className="flex items-center gap-4">
+        <ConfidenceRing confidence={result.confidence} />
+        <div className="min-w-0 flex-1">
+          <p
+            title={result.predicted_class}
+            className="text-lg font-semibold leading-snug tracking-[-0.01em] text-glow [overflow-wrap:anywhere]"
+          >
+            {result.predicted_class}
+          </p>
+          <p className="mt-1.5 font-mono text-xs tabular-nums text-glow/75">
+            confidence {confidencePercent}%
+          </p>
+        </div>
       </div>
 
-      <ProbabilityList
-        probabilities={result.probabilities}
-        predictedClass={result.predicted_class}
-      />
+      <hr className="border-glow/10" />
 
-      <p className="font-mono text-xs text-glow/70">
-        {result.model_name} · v{result.model_version}
-      </p>
+      {/* Supporting evidence */}
+      <div className="flex flex-col gap-3">
+        <p className="font-mono text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-glow/70">
+          All classes
+        </p>
+        <ProbabilityList
+          probabilities={result.probabilities}
+          predictedClass={result.predicted_class}
+        />
+      </div>
 
-      <p className="text-xs leading-relaxed text-glow/75">{DISCLAIMER}</p>
+      {/* Limits and provenance */}
+      <div className="mt-auto flex flex-col gap-3 border-t border-glow/10 pt-4">
+        <p className="text-xs leading-relaxed text-glow/75">
+          <span className="font-medium text-glow">Confidence is not certainty.</span>{" "}
+          It reflects how similar this image looked to the model&apos;s training
+          examples — not whether the classification is correct.
+        </p>
+        <p
+          className="truncate font-mono text-[0.6875rem] text-glow/75"
+          title={`${result.model_name} · v${result.model_version}`}
+        >
+          {result.model_name} · v{result.model_version}
+        </p>
+        <p className="text-xs leading-relaxed text-glow/75">{DISCLAIMER}</p>
 
-      <button
-        type="button"
-        onClick={onReset}
-        className="mt-auto w-full rounded-md border border-glow/30 px-5 py-3 font-medium text-glow transition-colors hover:border-glow/70"
-      >
-        Analyze another image
-      </button>
+        <button
+          type="button"
+          onClick={onReset}
+          className="mt-1 flex h-12 w-full cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border border-glow/30 px-4 text-sm font-medium text-glow transition-colors duration-200 hover:border-glow/70 hover:bg-white/5"
+        >
+          <RotateCcw aria-hidden="true" size={15} strokeWidth={1.75} />
+          Analyze another image
+        </button>
+      </div>
     </div>
   );
 }

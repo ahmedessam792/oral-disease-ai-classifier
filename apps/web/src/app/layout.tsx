@@ -1,15 +1,9 @@
 import type { Metadata } from "next";
-import { Newsreader, Public_Sans, Spline_Sans_Mono } from "next/font/google";
+import { Instrument_Sans, Spline_Sans_Mono } from "next/font/google";
 import "./globals.css";
 
-const newsreader = Newsreader({
-  variable: "--font-newsreader",
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-});
-
-const publicSans = Public_Sans({
-  variable: "--font-public-sans",
+const instrumentSans = Instrument_Sans({
+  variable: "--font-instrument",
   subsets: ["latin"],
 });
 
@@ -19,9 +13,9 @@ const splineSansMono = Spline_Sans_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Oral Disease AI Classifier",
+  title: "Arcus — AI oral image classification",
   description:
-    "Educational AI system that classifies oral images and reports confidence and probability distributions. Not a substitute for professional medical advice.",
+    "Upload an oral image and see what the model predicts, with its confidence and full probability distribution. Educational and research use only — not a substitute for professional medical advice.",
 };
 
 export default function RootLayout({
@@ -32,7 +26,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${newsreader.variable} ${publicSans.variable} ${splineSansMono.variable} h-full antialiased`}
+      className={`${instrumentSans.variable} ${splineSansMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">{children}</body>
     </html>

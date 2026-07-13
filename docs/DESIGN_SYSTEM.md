@@ -1,132 +1,125 @@
 ---
-title: Design System
+title: Design System — Arcus (v2)
 date: 2026-07-13
 tags:
   - design
   - frontend
 ---
 
-# Design System — Oral Disease AI Classifier
+# Design System — Arcus (v2)
 
-## 1. Product personality
+> [!NOTE]
+> v1 (the "clinical lightbox" editorial direction) was replaced on 2026-07-13. It was calm and readable but read as a *document*: serif headline, prose-heavy sections, and the analyzer below the fold. v2 makes the analyzer the product. Rationale in `docs/DECISIONS/003-arcus-redesign.md`.
 
-**A quiet diagnostic instrument, not a SaaS product.** The page behaves like a well-lit examination room: calm, orderly, unhurried. One element is allowed to be bold — the classifier itself, styled as a **clinical viewing lightbox (negatoscope)**: a dark instrument housing with a luminous viewing surface where the uploaded image is examined. Everything around it stays porcelain-quiet.
+## 1. Product identity
 
-Brand attributes: **precise · calm · candid · instrument-grade · educational**. Never: playful, salesy, gradient-heavy, glassmorphic, dashboard-like.
+**Arcus** — from *arcus dentalis*, the dental arch. The product name lives only in the UI; the repository, docs, and footer keep `oral-disease-ai-classifier`.
 
-Voice: plain verbs, sentence case, no marketing filler. Results are described as "AI classification result", never a diagnosis. Errors say what happened and what to do next.
+Personality: **a diagnostic instrument, not a document.** Porcelain page, one dark precision instrument, everything else quiet. Attributes: precise · calm · candid · instrument-grade · educational. Never: playful, salesy, gradient-heavy, glassmorphic, dashboard-like.
+
+Voice: plain verbs, sentence case, no marketing language. Results are "AI classification result", never a diagnosis. Errors state what happened and what to do next.
 
 ## 2. Color
 
-Derived from the clinical world: porcelain and enamel surfaces, petrol ink of chart annotations, scrub teal, mucosal rose used as a marking color.
-
 | Token | Hex | Role |
 |---|---|---|
-| `--color-porcelain` | `#F6F4F0` | Page background |
-| `--color-surface` | `#FFFFFF` | Cards, inputs |
-| `--color-ink` | `#1C2B33` | Primary text (dark petrol) |
-| `--color-ink-soft` | `#51616B` | Secondary text |
-| `--color-line` | `#DCD7CE` | Hairlines, borders |
-| `--color-teal` | `#2A7D6F` | Primary accent: actions, focus, links, bars |
-| `--color-teal-deep` | `#1F5F55` | Hover/active |
-| `--color-rose` | `#B65C6B` | Marking color: predicted-class tick, small highlights only |
-| `--color-housing` | `#182A30` | Lightbox housing, footer background |
-| `--color-housing-2` | `#213840` | Raised surfaces inside the housing |
-| `--color-glow` | `#F4F8F7` | Lightbox viewing surface ("lit film") |
-| `--color-warn` | `#B97E24` | Low-confidence and caution notices |
-| `--color-error` | `#A03B2E` | Errors, invalid states |
+| `porcelain` | `#f3f5f4` | Page background |
+| `surface` | `#ffffff` | Cards, panels, chips |
+| `ink` | `#14232a` | Primary text |
+| `ink-soft` | `#4d5f68` | Secondary text |
+| `ink-faint` | `#5f6e76` | Mono labels, counters — **lightest text tone allowed** (4.5:1 on white) |
+| `line` / `line-strong` | `#dde3e2` / `#c6d0cf` | Hairlines, borders |
+| `teal` / `teal-deep` | `#1f6f62` / `#17564c` | The only interactive color: CTAs, links, focus |
+| `teal-wash` | `#e7f0ee` | Icon tiles, hover fills |
+| **`scan`** | `#4fd1c5` | **Instrument-only.** Scan/AI affordances: the arc, reticle, ready state, result eyebrow. Never on porcelain — it fails contrast there. |
+| `housing` / `-2` / `-3` | `#10222a` / `#1a333c` / `#24444e` | The instrument body and its panels; footer |
+| `glow` | `#f2f7f6` | Text and lit surfaces inside the housing |
+| `rose` | `#bf6272` | Marking color: the predicted class only (confidence ring + its bar) |
+| `warn` / `warn-ink` | `#b97e24` / `#855a12` | Mock/caution — `warn` on housing, `warn-ink` on light surfaces (AA) |
+| `error` | `#c0503f` | Error states |
 
-Rules: rose never exceeds ~2% of any viewport; teal is the only interactive color; the housing palette appears **only** inside the classifier instrument and footer. Contrast ≥ 4.5:1 for all text (ink on porcelain = 12.5:1, glow on housing ≥ 12:1).
+Rules: teal is the only interactive color; rose never exceeds ~2% of a viewport; the housing palette appears only in the instrument and footer. **All text ≥ 4.5:1** — on the housing, never fall below `/70` opacity (axe scans enforce this).
 
 ## 3. Typography
 
 | Role | Face | Usage |
 |---|---|---|
-| Display | **Newsreader** (500, optical sizing) | Headlines, section titles — scientific-journal register |
-| Body / UI | **Public Sans** (400/500/600) | Paragraphs, controls, forms — institutional clarity |
-| Data | **Spline Sans Mono** (400/500) | Eyebrows, percentages, class labels, chart annotations — tabular numerals |
+| Display + UI | **Instrument Sans** (400/500/600) | Headlines, body, controls |
+| Data | **Spline Sans Mono** (400/500) | Eyebrows, percentages, class labels, model IDs, specs |
 
-Scale (rem): `display 3.4/clamp` · `h2 2.0` · `h3 1.25` · `body 1.0/1.6lh` · `small 0.875` · `caption 0.8125 mono`. Eyebrows: mono, uppercase, `letter-spacing 0.14em`, ink-soft. Headline tracking `-0.01em`. Line length ≤ 68ch.
+No serif. Scale: `h1 1.875→2.75rem` (clamped by breakpoint) · `h2 1.25rem` · `body 1rem/1.6` · `small 0.875rem` · `mono label 0.6875rem, tracking 0.16em, uppercase`. Headline tracking `-0.02em`, max 17ch. Prose max 52–62ch. Numbers use `tabular-nums`.
 
-## 4. Spacing, radius, elevation
+## 4. Space, radius, elevation
 
-- **Spacing**: 4px base — `4 8 12 16 24 32 48 64 96 128`. Sections separated by 96–128px desktop, 64px mobile.
-- **Radius**: `--r-sm 6px` (inputs, chips) · `--r-md 10px` (cards, buttons) · `--r-lg 16px` (lightbox housing, hero media). No pills except status chips.
-- **Elevation**: mostly flat + hairlines. `--shadow-1: 0 1px 2px rgb(28 43 51 / 0.06)` (cards) · `--shadow-2: 0 12px 32px -12px rgb(28 43 51 / 0.25)` (the lightbox only). The lightbox viewing surface gets an inner glow (`inset 0 0 48px rgb(244 248 247 / 0.45)`), which is its "light".
+- **Spacing**: 4px base. Sections 56–64px vertical (was 96–128 — v1's emptiness read as filler).
+- **Radius**: `sm 6` · `md 10` (buttons, panels) · `lg 14` (instrument panels) · `xl 20` (the instrument shell).
+- **Elevation**: flat + hairlines everywhere, except the instrument, which carries `--shadow-instrument` (a deep, soft drop) and a 1px top-edge light gradient so it reads as a physical object on the page.
 
 ## 5. Iconography
 
-Lucide, 1.5px stroke, 20px default, `currentColor`. Icons always paired with text labels — never icon-only controls except the remove-image button (which gets an `aria-label`).
+Lucide, 1.75px stroke, 14–22px, `currentColor`. Always paired with text, except the remove-image control (which has an `aria-label`). No emoji.
 
-## 6. Motion principles
+## 6. Motion — four moments, CSS only
 
-Motion explains state changes; it never decorates. Framer Motion only where state actually changes:
+Framer Motion remains uninstalled (ADR 002). Motion explains state; it never decorates.
 
-1. **Lightbox power-on** — when an image is accepted, the viewing surface fades from housing-dark to glow (400ms ease-out).
-2. **Analysis sweep** — during classification, a single thin light band sweeps the image vertically (1.6s loop). This *is* the loading indicator.
-3. **Result settle** — probability bars grow from 0 with 40ms stagger (500ms ease-out); no count-up numbers.
+1. **Scan arc** — nodes pulse out of phase; one scan line traverses the arch. The idle instrument's heartbeat.
+2. **Power-on** — the viewing surface lights when an image is accepted (350ms).
+3. **Analysis sweep** — a single band crosses the dimmed image while classifying. This *is* the loading indicator.
+4. **Result reveal** — the report rises in (420ms), the confidence ring draws (700ms), probability bars grow with a 60ms stagger.
 
-Everything else uses CSS transitions ≤ 200ms. All three sequences collapse to instant opacity swaps under `prefers-reduced-motion: reduce` (the loading state then shows a static "Analyzing…" mono label with an opacity pulse).
+Everything else is a ≤200ms color transition. Under `prefers-reduced-motion: reduce`, the sweep and scan line are removed and all durations collapse to ~0.
 
-## 7. Accessibility rules
+## 7. Accessibility (enforced by the axe scans in `e2e/`)
 
-- Full keyboard path: dropzone is a real `<button>`; Enter/Space opens the file picker; visible 2px teal `outline-offset: 2px` focus rings on porcelain, glow-colored rings inside the housing.
-- All states announced: results region `aria-live="polite"`, errors `role="alert"`.
-- Probability bars are a described list (`role="list"`, text values in mono) — the bar is decorative.
-- Semantic landmarks: `header/main/section/footer`, one `h1`.
-- Touch targets ≥ 44px; contrast per §2; reduced motion per §6.
+- Keyboard: dropzone browse is a real `<button>`; disclosures are native `<details>`; full analyze flow is keyboard-operable (covered by an e2e test).
+- Focus: 2px teal ring on porcelain, `scan` ring inside the housing, always `outline-offset: 2px`.
+- Touch targets ≥ 44px (all buttons are `h-11`/`h-12`).
+- Live regions: report panel is `aria-live="polite"`; errors are `role="alert"` scoped inside `#classifier`; loading is `role="status"`.
+- One `h1`; semantic `header`/`main`/`section`/`footer`; probability bars are decorative with the values as text.
+- Long class labels: truncate with a `title`, or wrap via `overflow-wrap: anywhere` for the predicted class.
 
 ## 8. Layout
 
-Max content width 1120px, 24px gutters (16px mobile). 12-col grid on desktop only where needed.
+Container `max-w-1320px`, 16–24px gutters.
 
 ```text
-DESKTOP                             MOBILE
-┌──────────────────────────────┐    ┌──────────────┐
-│ header: name ······ nav     │    │ header       │
-│                              │    │              │
-│ HERO  eyebrow                │    │ HERO         │
-│ Newsreader thesis (2 lines)  │    │ headline     │
-│ subline + CTA → instrument   │    │ CTA          │
-│                              │    │              │
-│ ┌──────────────────────────┐ │    │ ┌──────────┐ │
-│ │  LIGHTBOX (housing)      │ │    │ │ LIGHTBOX │ │
-│ │ ┌──────────┐ ┌─────────┐ │ │    │ │ viewing  │ │
-│ │ │ viewing  │ │ chart / │ │ │    │ │ surface  │ │
-│ │ │ surface  │ │ result  │ │ │    │ ├──────────┤ │
-│ │ └──────────┘ └─────────┘ │ │    │ │ result   │ │
-│ └──────────────────────────┘ │    │ └──────────┘ │
-│                              │    │              │
-│ HOW IT WORKS (numbered 1–5,  │    │ stacked      │
-│  a real sequence)            │    │ sections     │
-│ MODEL INFO (from API)        │    │              │
-│ LIMITATIONS · PRIVACY        │    │              │
-│ footer (housing dark):       │    │ footer       │
-│  disclaimer                  │    │              │
-└──────────────────────────────┘    └──────────────┘
+≥1280px                              1024–1279px / <1024px
+┌──────────────────────────────┐     ┌──────────────────┐
+│ sticky header (64px)         │     │ sticky header    │
+├───────────────┬──────────────┤     ├──────────────────┤
+│ message       │ INSTRUMENT   │     │ compact message  │
+│ + trust chips │  scan arc |  │     ├──────────────────┤
+│               │  preview  |  │     │ INSTRUMENT       │
+│               │  report      │     │ (full width,     │
+└───────────────┴──────────────┘     │  panels side-by- │
+  How it works (5 icon steps)        │  side ≥1024,     │
+  The model (spec strip + chips)     │  stacked <1024)  │
+  Before you rely on a reading       └──────────────────┘
+    (2 accordions)
+  Footer (wordmark + disclaimer)
 ```
 
-Breakpoints: `<640` stacked · `640–1024` lightbox stacks viewing surface over result · `≥1024` side-by-side instrument.
+The upload control is visible without scrolling at 1440, 1280, and 1024; on mobile it sits directly under a three-line message.
 
-Numbered markers are used **only** in How-it-works because it is a genuine sequence (upload → validate → preprocess → classify → review).
+## 9. Instrument states
 
-## 9. Component states (the instrument's modes)
-
-| State | Viewing surface | Right panel |
+| State | Viewing surface | Report panel |
 |---|---|---|
-| **Empty** | Unlit (housing-2), dashed hairline, "Drop an oral image here" + browse button + accepted formats/size in mono caption | Quiet explainer of what will appear |
-| **Preview** | Power-on glow, image fit `contain`, filename + size in mono, Remove control | Analyze button (primary teal), enabled once |
-| **Loading** | Image dimmed 60%, analysis sweep | Analyze disabled, "Analyzing image…" |
-| **Result** | Image stays lit | "AI classification result" + predicted class (Newsreader) with rose tick, confidence in mono, probability bars, model name/version chip, mock banner if `mock`, low-confidence caution if below threshold, "Analyze another image" |
-| **Invalid file** | Unlit, error hairline | `role="alert"`: what was wrong + what is accepted |
-| **Missing model (503)** | Unlit | "The classification model isn't available yet" + explanation, retry |
-| **Backend down** | Unlit | "Can't reach the analysis service" + retry |
-| **Error (500)** | Unlit | Generic safe message + retry |
+| **Empty** | Scan arc + reticle brackets, "Drop an oral image here", Browse button, formats | Ghost report (dimmed rings/bars) + "what will appear here" |
+| **Drag-active** | Panel lightens, reticle brackets tighten and brighten | unchanged |
+| **Preview** | Image lit (`power-on`), filename + size, Remove control | Ghost report turns **scan-colored**, `ready` label, Analyze button |
+| **Loading** | Image dimmed 45%, sweep band | "Analyzing image…" + Validate/Preprocess/Classify pipeline; Analyze disabled |
+| **Result** | Image stays lit | Confidence ring + predicted class, all-classes bars, "confidence is not certainty", model · version, disclaimer, Analyze another |
+| **Invalid file** | Back to empty | `role="alert"` + "Choose another image" |
+| **Missing model (503)** | Preview retained | Alert: "The classification model isn't available yet" — retry allowed |
+| **Backend down** | Preview retained | Alert: "Can't reach the analysis service" — retry allowed |
+| **Server error** | Preview retained | Alert: "Something went wrong" |
+| **Mock mode** | — | Amber banner: "Development mock — not a real classification result" |
 
-Mock banner (whenever API returns `mock: true`): warn-amber hairline chip pinned atop the result — "Development mock — not a real classification result."
-
-## 10. Responsible-language rules
+## 10. Responsible-language rules (unchanged from v1)
 
 - Result heading is always "AI classification result".
-- The words *diagnosis*, *detected*, *confirmed* never appear in UI copy.
-- Educational disclaimer is permanently visible in the footer and echoed under every result: "Educational and research use only. Not a substitute for professional medical advice, diagnosis, or treatment."
+- *Diagnosis*, *detected*, *confirmed* never appear in UI copy.
+- The disclaimer appears under every result **and** permanently in the footer.
+- Mock results are always visibly labeled; production cannot serve them.

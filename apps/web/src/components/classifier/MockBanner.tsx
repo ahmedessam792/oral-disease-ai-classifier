@@ -7,9 +7,9 @@ export function MockBanner() {
   return (
     <p
       data-testid="mock-banner"
-      className="flex items-center gap-2 rounded-md border border-warn/70 bg-warn/15 px-3 py-2 font-mono text-xs text-glow"
+      className="flex items-start gap-2 rounded-md border border-warn/70 bg-warn/20 px-3 py-2.5 font-mono text-[0.6875rem] leading-relaxed text-glow"
     >
-      <TriangleAlert aria-hidden="true" size={14} strokeWidth={2} className="shrink-0" />
+      <TriangleAlert aria-hidden="true" size={14} strokeWidth={2} className="mt-0.5 shrink-0" />
       Development mock — not a real classification result
     </p>
   );

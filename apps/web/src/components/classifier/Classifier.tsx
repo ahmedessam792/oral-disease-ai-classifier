@@ -94,62 +94,62 @@ export function Classifier() {
 
   const handleReset = useCallback(() => replacePreview({}), [replacePreview]);
 
-  const showViewingSurface = state.previewUrl !== null;
+  const hasImage = state.previewUrl !== null && state.file !== null;
 
   return (
-    <section id="classifier" aria-labelledby="classifier-heading" className="scroll-mt-24">
-      <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-        <h2 id="classifier-heading" className="sr-only">
-          Image classifier
-        </h2>
-        <div className="on-housing rounded-lg bg-housing p-4 shadow-2 sm:p-6">
-          <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2 px-1">
-            <p className="font-mono text-[0.8125rem] uppercase tracking-[0.14em] text-glow/70">
-              Viewing surface
-            </p>
-            <p className="font-mono text-xs text-glow/70">
-              JPG · PNG · WEBP · BMP
-            </p>
-          </div>
+    <section
+      id="classifier"
+      aria-labelledby="classifier-heading"
+      className="on-housing instrument scroll-mt-20 rounded-xl p-3 sm:p-4"
+    >
+      <h2 id="classifier-heading" className="sr-only">
+        Image classifier
+      </h2>
 
-          <div className="grid gap-4 lg:grid-cols-[3fr_2fr]">
-            {/* Viewing surface */}
-            <div
-              className={`power-on relative min-h-[320px] overflow-hidden rounded-md sm:min-h-[400px] ${
-                showViewingSurface ? "viewing-lit bg-glow" : "bg-housing-2"
-              }`}
-            >
-              {showViewingSurface && state.previewUrl && state.file ? (
-                <ImagePreview
-                  previewUrl={state.previewUrl}
-                  file={state.file}
-                  isAnalyzing={state.phase === "loading"}
-                  onRemove={handleRemove}
-                  removeDisabled={state.phase === "loading"}
-                />
-              ) : (
-                <UploadDropzone onFileSelected={handleFileSelected} />
-              )}
-            </div>
+      {/* Instrument header bar */}
+      <div className="flex items-center justify-between gap-3 px-2 pb-3 pt-1">
+        <p className="font-mono text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-scan">
+          Analyzer
+        </p>
+        <p className="font-mono text-[0.6875rem] text-glow/70">JPG · PNG · WEBP · BMP</p>
+      </div>
 
-            {/* Chart / result panel */}
-            <div
-              className="flex min-h-[320px] flex-col rounded-md bg-housing-2 p-5 sm:min-h-[400px]"
-              aria-live="polite"
-            >
-              {state.phase === "result" && state.result ? (
-                <ResultPanel result={state.result} onReset={handleReset} />
-              ) : (
-                <StatusPanel
-                  phase={state.phase}
-                  error={state.error}
-                  canAnalyze={state.phase === "preview"}
-                  onAnalyze={handleAnalyze}
-                  onReset={handleReset}
-                />
-              )}
-            </div>
-          </div>
+      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.92fr)]">
+        {/* Viewing surface */}
+        <div
+          className={`power-on relative min-h-[300px] overflow-hidden rounded-lg sm:min-h-[360px] ${
+            hasImage ? "viewing-lit bg-glow" : "bg-housing-2"
+          }`}
+        >
+          {hasImage && state.previewUrl && state.file ? (
+            <ImagePreview
+              previewUrl={state.previewUrl}
+              file={state.file}
+              isAnalyzing={state.phase === "loading"}
+              onRemove={handleRemove}
+              removeDisabled={state.phase === "loading"}
+            />
+          ) : (
+            <UploadDropzone onFileSelected={handleFileSelected} />
+          )}
+        </div>
+
+        {/* Report panel */}
+        <div
+          className="flex min-h-[300px] flex-col rounded-lg bg-housing-2 p-5 sm:min-h-[360px]"
+          aria-live="polite"
+        >
+          {state.phase === "result" && state.result ? (
+            <ResultPanel result={state.result} onReset={handleReset} />
+          ) : (
+            <StatusPanel
+              phase={state.phase}
+              error={state.error}
+              canAnalyze={state.phase === "preview"}
+              onAnalyze={handleAnalyze}
+              onReset={handleReset}
+            />
+          )}
         </div>
       </div>
     </section>

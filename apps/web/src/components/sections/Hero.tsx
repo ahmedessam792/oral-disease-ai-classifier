@@ -1,26 +1,38 @@
+import { CircleSlash, GraduationCap, Lock } from "lucide-react";
+
+const TRUST = [
+  { icon: Lock, label: "In-memory only" },
+  { icon: CircleSlash, label: "Never stored" },
+  { icon: GraduationCap, label: "Educational use" },
+];
+
+/** The message beside (or above) the instrument. Deliberately short: the
+ * analyzer is the argument, this is only the caption. */
 export function Hero() {
   return (
-    <section className="mx-auto max-w-[1120px] px-4 pb-16 pt-16 sm:px-6 sm:pb-20 sm:pt-24">
-      <p className="eyebrow">Oral diagnostic imaging · educational system</p>
-      <h1 className="mt-5 max-w-[16ch] font-display text-4xl leading-[1.08] tracking-[-0.01em] text-ink sm:text-6xl">
-        Every oral image deserves a careful reading.
+    <div className="flex flex-col justify-center">
+      <p className="eyebrow">AI oral image classification</p>
+
+      <h1 className="mt-3 max-w-[17ch] text-[1.875rem] font-semibold leading-[1.12] tracking-[-0.02em] text-ink sm:text-[2.125rem] xl:mt-4 xl:text-[2.75rem]">
+        Upload an oral image. See what the model predicts.
       </h1>
-      <p className="mt-6 max-w-[52ch] text-lg leading-relaxed text-ink-soft">
-        Upload a photograph of teeth, gums, or oral tissue. A deep-learning
-        model classifies it and reports its confidence — openly, including the
-        probabilities it assigned to every class it knows.
+
+      <p className="mt-4 max-w-[52ch] text-base leading-relaxed text-ink-soft xl:max-w-[46ch] xl:text-[1.0625rem]">
+        Arcus classifies photographs of teeth, gums, and oral tissue — and shows
+        its confidence, along with every probability it assigned.
       </p>
-      <div className="mt-8 flex flex-wrap items-center gap-4">
-        <a
-          href="#classifier"
-          className="rounded-md bg-teal px-6 py-3 font-medium text-white transition-colors hover:bg-teal-deep"
-        >
-          Analyze an image
-        </a>
-        <p className="max-w-[36ch] text-sm text-ink-soft">
-          Educational and research use only — not medical advice.
-        </p>
-      </div>
-    </section>
+
+      <ul className="mt-5 flex flex-wrap gap-2">
+        {TRUST.map(({ icon: Icon, label }) => (
+          <li
+            key={label}
+            className="flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-[0.8125rem] text-ink-soft"
+          >
+            <Icon aria-hidden="true" size={14} strokeWidth={1.75} className="text-teal" />
+            {label}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
