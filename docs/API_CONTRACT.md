@@ -13,10 +13,24 @@ Base URL: configured per environment (`NEXT_PUBLIC_API_URL` on the frontend). In
 Always 200 while the process is alive.
 
 ```json
-{ "status": "ok", "model_loaded": true, "mode": "real" }
+{ "status": "ok", "model_loaded": true, "mode": "real", "error_code": null }
 ```
 
-`mode`: `real` | `mock` | `unavailable`.
+| `mode` | Meaning |
+|---|---|
+| `real` | the trained model (ResNet50V2) is loaded and serving |
+| `mock` | the development predictor is serving — never in production |
+| `unavailable` | no model is configured |
+| `model_load_failed` | a real model was expected but could not be loaded |
+
+`error_code` is `null` when serving, otherwise a short, safe reason:
+`MODEL_LOAD_FAILED`, `INVALID_MODEL_CONFIG`, `MOCK_FORBIDDEN_IN_PRODUCTION`, or
+`MODEL_NOT_CONFIGURED`. It never contains paths, stack traces, or model
+internals.
+
+> [!IMPORTANT]
+> A real model that fails to load is **reported**, never replaced by mock
+> predictions.
 
 ## GET /api/v1/model/info
 
@@ -55,7 +69,13 @@ Multipart form, field name `file`. Accepted: `.jpg .jpeg .png .webp .bmp`, MIME 
 }
 ```
 
-`probabilities` has one entry per class from `model/labels.json`, summing to ~1. `confidence` equals the maximum probability. `mock: true` only ever appears in development; UIs must label such results as not real.
+`probabilities` has one entry per class from `model/class_config.json` (6 classes
+for the current ResNet50V2), summing to ~1. `confidence` equals the maximum
+probability. `mock: true` only ever appears in development; UIs must label such
+results as not real, and must show no mock banner when `mock: false`.
+
+Typical real-model response times are ~0.6–1.1 s of CPU per image; inference runs
+in a threadpool so concurrent requests are not blocked.
 
 ## Error envelope
 

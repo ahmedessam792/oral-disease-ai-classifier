@@ -58,7 +58,9 @@ export function ConfidenceRing({ confidence }: ConfidenceRingProps) {
         />
       </svg>
       <span className="absolute inset-0 flex items-center justify-center font-mono text-lg font-medium text-glow">
-        {percent.toFixed(0)}%
+        {/* Round down: a 99.9% result must never be displayed as "100%".
+            The exact value is shown as text beside the ring. */}
+        {Math.floor(percent)}%
       </span>
     </div>
   );

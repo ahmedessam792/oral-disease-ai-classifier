@@ -7,9 +7,9 @@ An educational web application that classifies oral/dental images with a deep-le
 
 ## Architecture
 
-- **`apps/web`** — Next.js 15 (App Router, TypeScript strict, Tailwind CSS v4). Deployed to Vercel.
+- **`apps/web`** — Next.js (App Router, TypeScript strict, Tailwind CSS v4), the *Arcus* UI. Deployed to Vercel.
 - **`apps/api`** — FastAPI (Python 3.12) with a framework-agnostic model adapter layer. Deployed to Hugging Face Spaces (Docker).
-- **`model/`** — drop-in location for the final trained model + `metadata.json` + `labels.json` (never committed).
+- **`model/`** — the trained **ResNet50V2** (`oral_disease_resnet50v2_deployment.keras`) plus `class_config.json`, which is the single source of truth for class labels, input size, and preprocessing. Weights are never committed.
 - **No database** — images are validated and processed entirely in memory, never stored. See `docs/DECISIONS/001-no-database.md`.
 
 ```mermaid

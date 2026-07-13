@@ -31,6 +31,10 @@ export default defineConfig({
       url: "http://localhost:8000/health",
       reuseExistingServer: true,
       timeout: 60_000,
+      // This suite tests the mock states on purpose. Pinning the mode keeps it
+      // fast and TF-free now that a real 350 MB model sits in model/ — the real
+      // model is covered by the backend suite and by real-model.spec.ts.
+      env: { MODEL_MODE: "mock", APP_ENV: "development" },
     },
     {
       command: "cd ../apps/web && npm run dev",
