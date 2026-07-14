@@ -6,10 +6,12 @@ import type { ApiResult, PredictionResponse } from "@/lib/types";
 
 vi.mock("@/lib/api-client", () => ({
   predictImage: vi.fn(),
+  getModelInfo: vi.fn(),
 }));
 
-import { predictImage } from "@/lib/api-client";
+import { getModelInfo, predictImage } from "@/lib/api-client";
 const predictImageMock = vi.mocked(predictImage);
+const getModelInfoMock = vi.mocked(getModelInfo);
 
 const PREDICTION: PredictionResponse = {
   predicted_class: "Mock Class B",
@@ -31,6 +33,9 @@ async function selectFile(file: File) {
 
 beforeEach(() => {
   predictImageMock.mockReset();
+  getModelInfoMock.mockReset();
+  // The analyzer reads model metadata (input size, threshold) from the API.
+  getModelInfoMock.mockResolvedValue({ ok: false, error: { kind: "network", code: "NETWORK", message: "offline" } });
 });
 
 describe("Classifier", () => {
@@ -79,13 +84,13 @@ describe("Classifier", () => {
 
     await waitFor(() => expect(screen.getByTestId("result-panel")).toBeInTheDocument());
     expect(screen.getAllByText("Mock Class B").length).toBeGreaterThan(0);
-    expect(screen.getByText("confidence 72.0%")).toBeInTheDocument();
+    // One confidence figure only, rounded down (0.72 -> "72%").
+    expect(screen.getByText("72%")).toBeInTheDocument();
+    expect(screen.queryByText(/^confidence \d+\.\d%$/i)).not.toBeInTheDocument();
     expect(screen.getByTestId("probability-list")).toBeInTheDocument();
     expect(screen.getByTestId("mock-banner")).toBeInTheDocument();
-    expect(screen.getByText(/mock-development-model/)).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Analyze another image" }),
-    ).toBeInTheDocument();
+    expect(screen.getByTestId("provenance")).toHaveTextContent("mock-development-model");
+    expect(screen.getByRole("button", { name: /Analyze another/ })).toBeInTheDocument();
   });
 
   it("blocks duplicate submissions while analyzing", async () => {
@@ -167,7 +172,7 @@ describe("Classifier", () => {
     await userEvent.click(screen.getByRole("button", { name: "Analyze image" }));
     await waitFor(() => expect(screen.getByTestId("result-panel")).toBeInTheDocument());
 
-    await userEvent.click(screen.getByRole("button", { name: "Analyze another image" }));
+    await userEvent.click(screen.getByRole("button", { name: /Analyze another/ }));
     expect(screen.getByText("Drop an oral image here")).toBeInTheDocument();
     expect(screen.queryByTestId("result-panel")).not.toBeInTheDocument();
   });

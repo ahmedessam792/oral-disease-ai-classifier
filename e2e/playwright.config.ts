@@ -8,7 +8,9 @@ export default defineConfig({
   testDir: "./tests",
   fullyParallel: true,
   retries: process.env.CI ? 1 : 0,
-  workers: 4,
+  // 2 workers: the suite shares one Next server and one uvicorn worker, and at
+  // 4 the pages starve each other badly enough that `load` misses its timeout.
+  workers: 2,
   timeout: 60_000, // first navigation includes the dev server's cold compile
   reporter: [["list"]],
   use: {

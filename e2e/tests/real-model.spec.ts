@@ -13,6 +13,7 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
 import { classifierAlert } from "../helpers/locators";
+import { chooseFile } from "../helpers/upload";
 
 const REPO_ROOT = path.resolve(__dirname, "../..");
 const SAMPLE = path.join(REPO_ROOT, "model", "samples", "Mouth_Ulcer", "366.jpg");
@@ -29,9 +30,7 @@ test.beforeAll(() => {
 });
 
 async function uploadSample(page: import("@playwright/test").Page) {
-  const chooser = page.waitForEvent("filechooser");
-  await page.getByRole("button", { name: "Browse files" }).click();
-  await (await chooser).setFiles(SAMPLE);
+  await chooseFile(page, SAMPLE);
 }
 
 test("real model: upload → analyze → result, with no mock banner", async ({ page }) => {
@@ -55,9 +54,9 @@ test("real model: upload → analyze → result, with no mock banner", async ({ 
   await expect(page.getByText(/Development mock/i)).toHaveCount(0);
 
   // Real metadata and a full, real distribution.
-  await expect(page.getByText(/ResNet50V2 · v/)).toBeVisible();
+  await expect(page.getByTestId("provenance")).toContainText("ResNet50V2");
+  await expect(page.getByTestId("provenance")).toContainText("224×224");
   await expect(page.getByTestId("probability-list").getByRole("listitem")).toHaveCount(6);
-  await expect(page.getByText(/confidence \d+\.\d%/)).toBeVisible();
 
   // The predicted class is one of the real classes.
   const predicted = await page

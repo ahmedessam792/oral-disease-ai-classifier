@@ -11,11 +11,15 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Classifier } from "@/components/classifier/Classifier";
 import { ResultPanel } from "@/components/classifier/ResultPanel";
-import type { PredictionResponse } from "@/lib/types";
+import type { ModelInfoResponse, PredictionResponse } from "@/lib/types";
 
-vi.mock("@/lib/api-client", () => ({ predictImage: vi.fn() }));
-import { predictImage } from "@/lib/api-client";
+vi.mock("@/lib/api-client", () => ({
+  predictImage: vi.fn(),
+  getModelInfo: vi.fn(),
+}));
+import { getModelInfo, predictImage } from "@/lib/api-client";
 const predictImageMock = vi.mocked(predictImage);
+const getModelInfoMock = vi.mocked(getModelInfo);
 
 const REAL_PREDICTION: PredictionResponse = {
   predicted_class: "Tooth Discoloration",
@@ -33,7 +37,45 @@ const REAL_PREDICTION: PredictionResponse = {
   mock: false,
 };
 
-beforeEach(() => predictImageMock.mockReset());
+export const MODEL_INFO: ModelInfoResponse = {
+  model_name: "ResNet50V2",
+  model_version: "1.0.0",
+  framework: "tensorflow",
+  classes: [
+    "Calculus",
+    "Caries",
+    "Gingivitis",
+    "Hypodontia",
+    "Mouth Ulcer",
+    "Tooth Discoloration",
+  ],
+  input_size: { width: 224, height: 224 },
+  confidence_threshold: 0.5,
+  max_upload_mb: 10,
+  mock: false,
+  disclaimer:
+    "Educational and research use only. This system is not a substitute for professional medical advice, diagnosis, or treatment.",
+};
+
+function renderResult(overrides: Partial<PredictionResponse> = {}) {
+  return render(
+    <ResultPanel
+      result={{ ...REAL_PREDICTION, ...overrides }}
+      modelInfo={MODEL_INFO}
+      elapsedMs={412}
+      analyzedAt="2026-07-14T10:30:00.000Z"
+      previewUrl={null}
+      fileName="sample.jpg"
+      onReset={() => {}}
+    />,
+  );
+}
+
+beforeEach(() => {
+  predictImageMock.mockReset();
+  getModelInfoMock.mockReset();
+  getModelInfoMock.mockResolvedValue({ ok: true, data: MODEL_INFO });
+});
 
 async function analyze() {
   const input = screen.getByTestId("file-input") as HTMLInputElement;
@@ -52,36 +94,66 @@ describe("real-model mode", () => {
     expect(screen.queryByText(/Development mock/i)).not.toBeInTheDocument();
   });
 
-  it("renders the real model name, version, and confidence", async () => {
+  it("renders model provenance: name, version, input size, inference time", async () => {
     predictImageMock.mockResolvedValue({ ok: true, data: REAL_PREDICTION });
     render(<Classifier />);
     await analyze();
 
-    expect(screen.getByText("ResNet50V2 · v1.0.0")).toBeInTheDocument();
-    expect(screen.getByText("confidence 81.2%")).toBeInTheDocument();
+    const provenance = await screen.findByTestId("provenance");
+    expect(provenance).toHaveTextContent("ResNet50V2");
+    expect(provenance).toHaveTextContent("v1.0.0");
+    expect(provenance).toHaveTextContent("224×224");
+    expect(provenance).toHaveTextContent(/\d+ ms/);
   });
 
-  it("renders all six real class labels, longest first when predicted", async () => {
-    predictImageMock.mockResolvedValue({ ok: true, data: REAL_PREDICTION });
-    render(<Classifier />);
-    await analyze();
+  it("shows exactly ONE confidence value in the headline block, rounded down", () => {
+    renderResult();
 
+    // 81.23% -> "81%" in the ring. The old UI printed a SECOND, disagreeing
+    // figure right beside it ("confidence 81.2%"); that must not come back.
+    // (81.2% still appears once as this class's row in the distribution — that
+    // is the distribution, not a second confidence readout.)
+    expect(screen.getByText("81%")).toBeInTheDocument();
+    expect(screen.queryByText(/^confidence \d+\.\d%$/i)).not.toBeInTheDocument();
+    expect(screen.getAllByText("81.2%")).toHaveLength(1);
+    expect(screen.getByText(/not certainty/i)).toBeInTheDocument();
+  });
+
+  it("never displays 100% for a 99.9% result", () => {
+    renderResult({ confidence: 0.999, probabilities: { ...REAL_PREDICTION.probabilities } });
+    expect(screen.queryByText("100%")).not.toBeInTheDocument();
+    expect(screen.getByText("99%")).toBeInTheDocument();
+  });
+
+  it("renders all six real class labels", () => {
+    renderResult();
     const items = screen.getByTestId("probability-list").querySelectorAll("li");
     expect(items).toHaveLength(6);
-
-    for (const label of Object.keys(REAL_PREDICTION.probabilities)) {
+    for (const label of MODEL_INFO.classes) {
       expect(screen.getAllByText(label).length).toBeGreaterThan(0);
     }
-    // Highest probability sorts to the top.
     expect(items[0]).toHaveTextContent("Tooth Discoloration");
-    expect(items[0]).toHaveTextContent("81.2%");
+  });
+
+  it("renders vanishingly small probabilities as <0.1%, never a bare 0.0%", () => {
+    renderResult({
+      probabilities: {
+        Calculus: 0.00002,
+        Caries: 0.00001,
+        Gingivitis: 0.0688,
+        Hypodontia: 0.0201,
+        "Mouth Ulcer": 0.0255,
+        "Tooth Discoloration": 0.8855,
+      },
+    });
+
+    expect(screen.getAllByText("<0.1%").length).toBe(2);
+    expect(screen.queryByText("0.0%")).not.toBeInTheDocument();
   });
 
   it("keeps long class names intact and titled for overflow", () => {
-    render(<ResultPanel result={REAL_PREDICTION} onReset={() => {}} />);
+    renderResult();
 
-    // The long label is titled in both places it appears (the predicted-class
-    // heading and its probability row), so a truncated label stays readable.
     const titled = screen.getAllByTitle("Tooth Discoloration");
     expect(titled.length).toBeGreaterThanOrEqual(2);
     for (const element of titled) {
@@ -92,13 +164,14 @@ describe("real-model mode", () => {
     const mouthUlcer = Array.from(rows).find((row) =>
       row.textContent?.includes("Mouth Ulcer"),
     );
-    expect(mouthUlcer).toBeDefined();
     expect(mouthUlcer?.querySelector("[title='Mouth Ulcer']")).not.toBeNull();
   });
 
   it("still shows the medical disclaimer with a real result", () => {
-    render(<ResultPanel result={REAL_PREDICTION} onReset={() => {}} />);
-    expect(screen.getByText(/not a substitute for professional medical advice/i)).toBeInTheDocument();
-    expect(screen.getByText(/Confidence is not certainty/i)).toBeInTheDocument();
+    renderResult();
+    expect(
+      screen.getByText(/not a substitute for professional medical advice/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/not certainty/i)).toBeInTheDocument();
   });
 });
