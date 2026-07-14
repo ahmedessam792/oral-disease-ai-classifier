@@ -27,13 +27,20 @@ Upload an oral image, and a trained ResNet50V2 tells you what it predicts, how c
 
 Not deployed yet. Run it locally in two commands — see [Quick start](#quick-start).
 
-## Screenshots
+## Preview
 
-> Screenshots are captured from the running app with the real model. The sample images used for testing are held-out clinical photographs and are **not** included in this repository.
+**The analyzer.** One dark instrument on a quiet page — drop an oral image on the viewing surface, and the report builds beside it.
 
-| Analyzer | Result | Report |
-|---|---|---|
-| The instrument on arrival: drop an image on the viewing surface. | Predicted class, confidence, and the full six-class distribution. | A full report, downloadable as PDF. |
+![The Arcus analyzer: a dark instrument panel with a drop target on the left and an empty report on the right](docs/images/arcus-home.png)
+
+**A real result.** The predicted class, the confidence (rounded *down*), and the probability assigned to every one of the six classes — straight from the trained ResNet50V2.
+
+<p align="center">
+  <img src="docs/images/arcus-result.png" alt="A real classification result: Calculus at 97% confidence, with the full six-class probability distribution, model provenance, and the medical disclaimer" width="380">
+</p>
+
+> [!NOTE]
+> The screenshots are captured from the running app against the **real model**. The uploaded specimen is deliberately cropped out of the result view: the images used to exercise the model are held-out clinical photographs, and neither they nor any pixels of them are published in this repository.
 
 ## What it does
 
@@ -41,7 +48,7 @@ Not deployed yet. Run it locally in two commands — see [Quick start](#quick-st
 - **Shows the whole distribution**, not just the winner — the probability of every class, always.
 - **Refuses to overstate certainty.** Confidence is rounded *down* (a 99.9% result displays as 99%, never 100%), and vanishingly small probabilities render as `<0.1%` rather than a misleading `0.0%`.
 - **Downloadable PDF report**, generated entirely in your browser.
-- **Route-level page transitions** and a dedicated [About](apps/web/src/app/about) page.
+- **A dedicated [About](apps/web/src/app/about) page** covering the model, its limits, privacy behavior, and how the analysis works.
 - **Processes images in memory and discards them.** No storage, no database, no analytics.
 
 ## The model
