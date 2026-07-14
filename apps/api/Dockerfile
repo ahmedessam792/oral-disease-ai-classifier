@@ -20,14 +20,20 @@ RUN pip install --no-cache-dir -r requirements.txt
 # keras is pinned to the version the model was saved with (3.13.2).
 RUN pip install --no-cache-dir "tensorflow-cpu==2.21.0" "keras==3.13.2"
 
-COPY app ./app
+# Create the user, and the model mount point it owns, BEFORE copying anything
+# — COPY --chown sets ownership as part of the copy itself, so nothing needs a
+# recursive chown afterward (which would otherwise duplicate every byte it
+# touches into a second image layer — see deploy/huggingface/Dockerfile,
+# where that duplicated the ~350 MB model).
+RUN useradd --create-home appuser \
+    && mkdir -p /app/model \
+    && chown appuser:appuser /app/model
 
 # The trained model (.keras) and class_config.json are supplied at deploy time
 # — mounted locally by docker-compose, copied into the Space repo on Hugging
 # Face. They are never baked into git.
-RUN useradd --create-home appuser \
-    && mkdir -p /app/model \
-    && chown -R appuser:appuser /app
+COPY --chown=appuser:appuser app ./app
+
 USER appuser
 
 ENV MODEL_DIR=/app/model \

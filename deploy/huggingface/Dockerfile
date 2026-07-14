@@ -34,14 +34,18 @@ RUN pip install --no-cache-dir -r requirements.txt
 # keras is pinned to the version the model was saved with (3.13.2).
 RUN pip install --no-cache-dir "tensorflow-cpu==2.21.0" "keras==3.13.2"
 
-COPY app ./app
+# Create the user BEFORE copying anything owned by it — COPY --chown avoids
+# the recursive chown that used to duplicate the ~350 MB model into a second
+# image layer (chown -R touches every byte it recurses over, and Docker's
+# copy-on-write stores that as new layer content, not a metadata-only change).
+RUN useradd --create-home appuser
+
+COPY --chown=appuser:appuser app ./app
 
 # The model is part of this Space's own repository (Option A — see
 # README.md for why), so it is baked into the image at build time.
-COPY model ./model
+COPY --chown=appuser:appuser model ./model
 
-RUN useradd --create-home appuser \
-    && chown -R appuser:appuser /app
 USER appuser
 
 ENV MODEL_DIR=/app/model \
