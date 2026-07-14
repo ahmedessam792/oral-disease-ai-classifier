@@ -55,7 +55,7 @@ export function ModelClasses() {
           ["Framework", info.framework],
         ].map(([label, value]) => (
           <div key={label} className="rounded-md border border-line bg-surface px-4 py-3">
-            <dt className="font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-ink-faint">
+            <dt className="font-mono text-caption uppercase tracking-[0.1em] text-ink-faint">
               {label}
             </dt>
             <dd className="mt-1 truncate font-mono text-sm text-ink" title={value}>

@@ -88,7 +88,7 @@ export function UploadDropzone({ onFileSelected }: UploadDropzoneProps) {
       </button>
 
       {/* Format + size live only here — the instrument header no longer repeats them. */}
-      <p className="relative whitespace-nowrap font-mono text-[0.6875rem] text-glow/70">
+      <p className="relative whitespace-nowrap font-mono text-caption text-glow/70">
         {ACCEPTED_EXTENSIONS.map((ext) => ext.replace(".", "").toUpperCase()).join(" · ")} ·
         max {DEFAULT_MAX_UPLOAD_MB} MB
       </p>

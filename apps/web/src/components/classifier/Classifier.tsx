@@ -123,11 +123,11 @@ export function Classifier() {
       </h2>
 
       <div className="flex min-w-0 items-center justify-between gap-3 px-2 pb-3 pt-1">
-        <p className="shrink-0 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-scan">
+        <p className="shrink-0 font-mono text-caption font-medium uppercase tracking-[0.14em] text-scan">
           Analyzer
         </p>
         {info && (
-          <p className="min-w-0 truncate font-mono text-[0.6875rem] text-glow/70">
+          <p className="min-w-0 truncate font-mono text-caption text-glow/70">
             {info.model_name} · {info.input_size.width}×{info.input_size.height}
           </p>
         )}

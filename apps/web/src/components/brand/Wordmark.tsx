@@ -27,7 +27,11 @@ export function Wordmark({ tone = "ink" }: WordmarkProps) {
         <circle cx="3.5" cy="18" r="1.5" fill="currentColor" opacity="0.55" />
         <circle cx="20.5" cy="18" r="1.5" fill="currentColor" opacity="0.55" />
       </svg>
-      <span className="text-[1.0625rem] font-semibold tracking-[-0.01em]">Arcus</span>
+      {/* Pinned to the display face and an explicit optical size: the wordmark
+          is a mark, not body copy, and must not drift with the UI scale. */}
+      <span className="font-display text-[1.0625rem] font-semibold tracking-[-0.015em]">
+        Arcus
+      </span>
     </span>
   );
 }

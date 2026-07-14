@@ -13,5 +13,7 @@ export const ACCEPTED_MIME_TYPES = [
   "image/bmp",
 ];
 
+/** The one safety statement in the product UI. Said once, in each place it
+ *  matters, and never repeated back-to-back with itself. */
 export const DISCLAIMER =
-  "Educational and research use only. This system is not a substitute for professional medical advice, diagnosis, or treatment.";
+  "Arcus provides an AI classification result and is not a substitute for professional medical advice.";

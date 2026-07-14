@@ -8,9 +8,10 @@
   --color-line: #dce3e1;
   --color-line-strong: #c4cfcc;
 
-  /* Ink */
+  /* Ink — three clearly separated steps. Secondary and tertiary used to sit
+     ~1 step apart and read as one muddy tone; the ramp is now widened. */
   --color-ink: #101e24;
-  --color-ink-soft: #4b5d66;
+  --color-ink-soft: #3c4d55;
   --color-ink-faint: #5c6d75; /* lightest text tone allowed on white (AA) */
 
   /* Brand accent — the only interactive color */
@@ -35,10 +36,34 @@
   --color-error: #b4483a;
   --color-error-ink: #a03f32;
 
-  /* Type */
-  --font-display: var(--font-sora), system-ui, sans-serif;
-  --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  /* Type — one family carries headings and UI; mono is the only second face. */
+  --font-display: var(--font-instrument), system-ui, sans-serif;
+  --font-sans: var(--font-instrument), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Fixed rem scale, ~1.2 ratio. Product register: no fluid type in app UI. */
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.5;
+  --text-meta: 0.8125rem;
+  --text-meta--line-height: 1.5;
+  --text-ui: 0.875rem;
+  --text-ui--line-height: 1.5;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.6;
+  --text-h3: 1.25rem;
+  --text-h3--line-height: 1.35;
+  --text-h3--letter-spacing: -0.01em;
+  --text-h2: 1.5rem;
+  --text-h2--line-height: 1.25;
+  --text-h2--letter-spacing: -0.015em;
+  --text-h1: 2rem;
+  --text-h1--line-height: 1.14;
+  --text-h1--letter-spacing: -0.025em;
+  --text-display: 2.5rem;
+  --text-display--line-height: 1.1;
+  --text-display--letter-spacing: -0.03em;
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -156,51 +181,15 @@ h3 {
   }
 }
 
-/* --- Title Settle: the route transition (640ms total) --- */
-/* 1. panel wipes in from the top (180ms) */
-@keyframes curtain-in {
-  from {
-    clip-path: inset(0 0 100% 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
-  }
-}
-/* 2. after a 200ms hold, it wipes away upward while the title settles (260ms) */
-@keyframes curtain-out {
-  from {
-    clip-path: inset(0 0 0 0);
-  }
-  to {
-    clip-path: inset(0 0 100% 0);
-  }
-}
-@keyframes title-settle {
-  from {
-    opacity: 0;
-    transform: translateY(14px) scale(1);
-  }
-  35% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  70% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-26px) scale(0.62);
-  }
-}
+/* --- Route change: a crossfade, and nothing else ---
+   No curtain, no title card, no hold. Content is never covered and never
+   delayed; the fade only takes the edge off the swap. */
 @keyframes page-enter {
   from {
     opacity: 0;
-    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: none;
   }
 }
 
@@ -253,16 +242,8 @@ h3 {
     animation: rise-in 420ms var(--ease-out-quint) both;
   }
 
-  .route-curtain {
-    animation:
-      curtain-in 180ms var(--ease-out-expo) both,
-      curtain-out 260ms var(--ease-out-expo) 380ms both;
-  }
-  .route-title {
-    animation: title-settle 640ms var(--ease-out-expo) both;
-  }
   .page-enter {
-    animation: page-enter 380ms var(--ease-out-expo) 300ms both;
+    animation: page-enter 180ms var(--ease-out-quint) both;
   }
 
   .drawer-panel {
@@ -279,12 +260,6 @@ h3 {
   .analysis-sweep,
   .arc-scanline {
     display: none;
-  }
-  /* No movement, no delay — a short crossfade only. */
-  .route-curtain,
-  .route-title {
-    animation: none;
-    opacity: 0;
   }
   .page-enter,
   .drawer-panel,
@@ -316,8 +291,7 @@ h3 {
   .no-print,
   header,
   footer,
-  nav,
-  .route-curtain {
+  nav {
     display: none !important;
   }
   .print-report {

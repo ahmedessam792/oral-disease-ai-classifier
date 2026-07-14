@@ -1,37 +1,26 @@
-import Link from "next/link";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { DISCLAIMER } from "@/lib/config";
 
+/**
+ * A hairline, not a slab. The footer used to be a full dark housing block,
+ * which put a second dark mass on the page competing with the analyzer. There
+ * is exactly one dark instrument here now, and it is the classifier.
+ */
 export function Footer() {
   return (
-    <footer className="on-housing mt-auto bg-housing">
-      <div className="mx-auto flex max-w-[1320px] flex-col gap-8 px-4 py-12 sm:px-6 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <Wordmark tone="glow" />
-          <p className="mt-2 font-mono text-xs text-glow/70">
-            Oral image classification, openly reported
+    <footer className="mt-auto border-t border-line">
+      <div className="mx-auto flex max-w-[1320px] flex-col gap-4 px-4 py-8 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+        {/* No nav here: the header already owns navigation, and a second About
+            link is a duplicated action, not a convenience. The repository link
+            slots in beside the wordmark once the repo is published. */}
+        <div className="flex items-center gap-4">
+          <Wordmark />
+          <p className="font-mono text-caption text-ink-faint">
+            oral-disease-ai-classifier
           </p>
-          {/* Repository link slots in here once the repo is published. */}
-          <nav aria-label="Footer" className="mt-4">
-            <Link
-              href="/about"
-              className="text-sm text-glow/80 underline-offset-4 transition-colors hover:text-glow hover:underline"
-            >
-              About Arcus
-            </Link>
-          </nav>
         </div>
 
-        <div className="max-w-[62ch]">
-          <p className="text-sm leading-relaxed text-glow/80">
-            <strong className="font-medium text-glow">Medical disclaimer.</strong>{" "}
-            {DISCLAIMER} If you have concerns about your oral health, consult a
-            dentist or physician.
-          </p>
-          <p className="mt-4 font-mono text-xs text-glow/70">
-            oral-disease-ai-classifier · academic deep-learning project
-          </p>
-        </div>
+        <p className="max-w-[62ch] text-caption text-ink-faint">{DISCLAIMER}</p>
       </div>
     </footer>
   );

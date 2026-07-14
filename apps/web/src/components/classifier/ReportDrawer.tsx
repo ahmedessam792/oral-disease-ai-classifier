@@ -100,10 +100,10 @@ export function ReportDrawer({
         <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-line bg-porcelain/95 px-5 py-4 backdrop-blur-sm sm:px-6">
           <div>
             <Wordmark />
-            <h2 id="report-title" className="mt-2 font-display text-lg font-semibold text-ink">
+            <h2 id="report-title" className="mt-2 font-display text-h3 font-semibold text-ink">
               Analysis report
             </h2>
-            <p className="mt-1 font-mono text-[0.6875rem] text-ink-faint">
+            <p className="mt-1 font-mono text-caption text-ink-faint">
               {reportId} · {formatTimestamp(analyzedAt)}
             </p>
           </div>
@@ -118,9 +118,8 @@ export function ReportDrawer({
         </div>
 
         <div className="flex flex-col gap-6 px-5 py-6 sm:px-6">
-          <p className="rounded-md border border-teal/30 bg-teal-wash px-3 py-2 text-xs leading-relaxed text-teal-deep">
-            Educational and research use only. <strong className="font-medium">This result
-            is not a diagnosis.</strong>
+          <p className="rounded-md border border-teal/30 bg-teal-wash px-3 py-2 text-caption text-teal-deep">
+            <strong className="font-medium">This result is not a diagnosis.</strong>
           </p>
 
           {result.mock && (
@@ -138,7 +137,7 @@ export function ReportDrawer({
                 alt="The analyzed image"
                 className="max-h-64 w-full rounded-lg border border-line bg-surface object-contain p-2"
               />
-              <figcaption className="mt-2 font-mono text-[0.6875rem] text-ink-faint">
+              <figcaption className="mt-2 font-mono text-caption text-ink-faint">
                 Analyzed image · processed in memory, not stored
               </figcaption>
             </figure>
@@ -147,7 +146,7 @@ export function ReportDrawer({
           {/* Headline result */}
           <div className="print-keep">
             <p className="eyebrow">AI classification result</p>
-            <p className="mt-2 font-display text-2xl font-semibold tracking-[-0.01em] text-ink [overflow-wrap:anywhere]">
+            <p className="mt-2 font-display text-h2 font-semibold text-ink [overflow-wrap:anywhere]">
               {result.predicted_class}
             </p>
             <p className="mt-1 font-mono text-sm tabular-nums text-ink-soft">
@@ -176,7 +175,7 @@ export function ReportDrawer({
             <dl className="grid grid-cols-2 gap-3">
               {specs.map(([label, value]) => (
                 <div key={label} className="rounded-md border border-line bg-surface px-3 py-2">
-                  <dt className="font-mono text-[0.625rem] uppercase tracking-[0.1em] text-ink-faint">
+                  <dt className="font-mono text-caption uppercase tracking-[0.1em] text-ink-faint">
                     {label}
                   </dt>
                   <dd className="mt-1 truncate font-mono text-xs text-ink" title={value}>

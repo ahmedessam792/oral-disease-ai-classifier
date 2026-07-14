@@ -1,27 +1,21 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Sora } from "next/font/google";
+import { Geist_Mono, Instrument_Sans } from "next/font/google";
 import { Footer } from "@/components/sections/Footer";
 import { Header } from "@/components/sections/Header";
 import { RouteTransition } from "@/components/transition/RouteTransition";
 import "./globals.css";
 
-// Only the weights actually used, latin subset, swap — three variable families.
-const sora = Sora({
-  variable: "--font-sora",
+// Two families, not three. Instrument Sans carries headings AND UI — hierarchy
+// comes from weight and size, not from two similar sans fighting each other.
+// Geist Mono is the only second face, on a real contrast axis, for data.
+const instrumentSans = Instrument_Sans({
+  variable: "--font-instrument",
   subsets: ["latin"],
-  weight: ["600", "700"],
   display: "swap",
 });
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains",
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
   display: "swap",
@@ -30,7 +24,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Arcus — AI oral image classification",
   description:
-    "Upload an oral image and see what the model predicts, with its confidence and full probability distribution. Educational and research use only — not a substitute for professional medical advice.",
+    "Upload an oral image and see what the model predicts, with its confidence and full probability distribution. Not a substitute for professional medical advice.",
 };
 
 export default function RootLayout({
@@ -41,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${instrumentSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <Header />

@@ -66,7 +66,7 @@ export function ResultPanel({
       <p
         ref={headingRef}
         tabIndex={-1}
-        className="font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-scan outline-none"
+        className="font-mono text-caption font-medium uppercase tracking-[0.14em] text-scan outline-none"
       >
         AI classification result
       </p>
@@ -78,7 +78,7 @@ export function ResultPanel({
         <div className="min-w-0 flex-1">
           <p
             title={result.predicted_class}
-            className="font-display text-xl font-semibold leading-snug tracking-[-0.01em] text-glow [overflow-wrap:anywhere]"
+            className="font-display text-h3 font-semibold text-glow [overflow-wrap:anywhere]"
           >
             {result.predicted_class}
           </p>
@@ -89,7 +89,7 @@ export function ResultPanel({
       </div>
 
       <div className="flex flex-col gap-3">
-        <p className="font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-glow/70">
+        <p className="font-mono text-caption font-medium uppercase tracking-[0.14em] text-glow/70">
           All classes
         </p>
         <ProbabilityList
@@ -103,7 +103,7 @@ export function ResultPanel({
         {/* Wraps rather than truncates: this line is the credibility — the
             inference time must not be the part that gets cut off. */}
         <p
-          className="font-mono text-[0.6875rem] leading-relaxed text-glow/75"
+          className="font-mono text-caption leading-relaxed text-glow/75"
           title={provenance}
           data-testid="provenance"
         >

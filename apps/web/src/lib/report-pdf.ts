@@ -79,7 +79,7 @@ export async function downloadReportPdf(
 
   doc.setFontSize(9);
   doc.setTextColor(20, 111, 99); // teal
-  doc.text("Educational and research use only", MARGIN, (y += 5));
+  doc.text("Not a diagnosis. Not a substitute for professional medical advice.", MARGIN, (y += 5));
 
   doc.setDrawColor(220, 227, 225);
   doc.line(MARGIN, (y += 4), PAGE_WIDTH - MARGIN, y);

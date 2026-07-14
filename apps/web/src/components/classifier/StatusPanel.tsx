@@ -73,11 +73,11 @@ export function StatusPanel({ phase, error, canAnalyze, onAnalyze, onReset }: St
   return (
     <div className="flex flex-1 flex-col gap-4">
       <div className="flex items-baseline justify-between gap-3">
-        <p className="font-mono text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-glow/70">
+        <p className="font-mono text-caption font-medium uppercase tracking-[0.16em] text-glow/70">
           Report
         </p>
         {phase === "preview" && (
-          <p className="font-mono text-[0.6875rem] text-scan">ready</p>
+          <p className="font-mono text-caption text-scan">ready</p>
         )}
       </div>
 

@@ -24,7 +24,7 @@ export function Header() {
                   <Link
                     href={route.href}
                     aria-current={isCurrent ? "page" : undefined}
-                    className={`flex h-11 items-center rounded-md px-4 text-sm transition-colors duration-200 ${
+                    className={`flex h-11 items-center rounded-md px-4 text-ui transition-colors duration-200 ${
                       isCurrent
                         ? "bg-teal-wash font-medium text-teal-deep"
                         : "text-ink-soft hover:bg-teal-wash/60 hover:text-teal-deep"
