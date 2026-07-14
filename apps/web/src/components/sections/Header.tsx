@@ -1,38 +1,41 @@
-import { Wordmark } from "@/components/brand/Wordmark";
+"use client";
 
-const LINKS = [
-  { href: "#how-it-works", label: "How it works" },
-  { href: "#model", label: "Model" },
-  { href: "#limits", label: "Limits" },
-];
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Wordmark } from "@/components/brand/Wordmark";
+import { ROUTES } from "@/lib/routes";
 
 export function Header() {
-  return (
-    <header className="sticky top-0 z-20 border-b border-line bg-porcelain/85 backdrop-blur-sm">
-      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-4 px-4 sm:px-6">
-        <a href="#top" className="rounded-sm" aria-label="Arcus — home">
-          <Wordmark />
-        </a>
+  const pathname = usePathname();
 
-        <nav aria-label="Page sections" className="flex items-center gap-1 sm:gap-2">
-          <ul className="hidden items-center gap-1 sm:flex">
-            {LINKS.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  className="rounded-md px-3 py-2 text-sm text-ink-soft transition-colors hover:bg-teal-wash hover:text-teal-deep"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
+  return (
+    <header className="sticky top-0 z-30 border-b border-line bg-porcelain/85 backdrop-blur-sm">
+      <div className="mx-auto flex h-16 max-w-[1320px] items-center justify-between gap-4 px-4 sm:px-6">
+        <Link href="/" className="rounded-sm" aria-label="Arcus — home">
+          <Wordmark />
+        </Link>
+
+        <nav aria-label="Main">
+          <ul className="flex items-center gap-1">
+            {ROUTES.map((route) => {
+              const isCurrent = pathname === route.href;
+              return (
+                <li key={route.href}>
+                  <Link
+                    href={route.href}
+                    aria-current={isCurrent ? "page" : undefined}
+                    className={`flex h-11 items-center rounded-md px-4 text-sm transition-colors duration-200 ${
+                      isCurrent
+                        ? "bg-teal-wash font-medium text-teal-deep"
+                        : "text-ink-soft hover:bg-teal-wash/60 hover:text-teal-deep"
+                    }`}
+                  >
+                    {route.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
-          <a
-            href="#classifier"
-            className="ml-1 flex h-11 items-center rounded-md bg-teal px-4 text-sm font-medium text-white transition-colors hover:bg-teal-deep"
-          >
-            Analyze an image
-          </a>
         </nav>
       </div>
     </header>

@@ -1,13 +1,25 @@
+import Link from "next/link";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { DISCLAIMER } from "@/lib/config";
 
 export function Footer() {
   return (
     <footer className="on-housing mt-auto bg-housing">
-      <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-4 py-12 sm:px-6 lg:flex-row lg:items-start lg:justify-between">
+      <div className="mx-auto flex max-w-[1320px] flex-col gap-8 px-4 py-12 sm:px-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <Wordmark tone="glow" />
-          <p className="mt-2 font-mono text-xs text-glow/70">Oral intelligence, openly reported</p>
+          <p className="mt-2 font-mono text-xs text-glow/70">
+            Oral image classification, openly reported
+          </p>
+          {/* Repository link slots in here once the repo is published. */}
+          <nav aria-label="Footer" className="mt-4">
+            <Link
+              href="/about"
+              className="text-sm text-glow/80 underline-offset-4 transition-colors hover:text-glow hover:underline"
+            >
+              About Arcus
+            </Link>
+          </nav>
         </div>
 
         <div className="max-w-[62ch]">

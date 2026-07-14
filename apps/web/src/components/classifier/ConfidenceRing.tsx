@@ -1,66 +1,65 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { displayConfidence } from "@/lib/report";
 
 interface ConfidenceRingProps {
   /** 0–1 */
   confidence: number;
+  size?: number;
 }
 
-const SIZE = 96;
 const STROKE = 7;
-const RADIUS = (SIZE - STROKE) / 2;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 /**
- * Confidence as a calibrated dial. The numeric value stays in the DOM as text
- * (screen readers and tests read it); the ring is decorative reinforcement.
+ * Confidence as a calibrated dial. The value is rounded DOWN — a 99.9% result
+ * must never render as "100%". This is the only place the number is shown in
+ * the primary block, so there is never a second, disagreeing figure beside it.
  */
-export function ConfidenceRing({ confidence }: ConfidenceRingProps) {
+export function ConfidenceRing({ confidence, size = 92 }: ConfidenceRingProps) {
   const [settled, setSettled] = useState(false);
   useEffect(() => {
     const frame = requestAnimationFrame(() => setSettled(true));
     return () => cancelAnimationFrame(frame);
   }, []);
 
-  const percent = confidence * 100;
-  const offset = settled ? CIRCUMFERENCE * (1 - confidence) : CIRCUMFERENCE;
+  const radius = (size - STROKE) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = settled ? circumference * (1 - confidence) : circumference;
 
   return (
-    <div className="relative shrink-0" style={{ width: SIZE, height: SIZE }}>
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
       <svg
-        width={SIZE}
-        height={SIZE}
+        width={size}
+        height={size}
         aria-hidden="true"
         className="-rotate-90"
-        viewBox={`0 0 ${SIZE} ${SIZE}`}
+        viewBox={`0 0 ${size} ${size}`}
       >
         <circle
-          cx={SIZE / 2}
-          cy={SIZE / 2}
-          r={RADIUS}
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
           fill="none"
           stroke="currentColor"
           className="text-glow/15"
           strokeWidth={STROKE}
         />
         <circle
-          cx={SIZE / 2}
-          cy={SIZE / 2}
-          r={RADIUS}
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
           fill="none"
           stroke="currentColor"
           className="confidence-ring-track text-rose"
           strokeWidth={STROKE}
           strokeLinecap="round"
-          strokeDasharray={CIRCUMFERENCE}
+          strokeDasharray={circumference}
           strokeDashoffset={offset}
         />
       </svg>
-      <span className="absolute inset-0 flex items-center justify-center font-mono text-lg font-medium text-glow">
-        {/* Round down: a 99.9% result must never be displayed as "100%".
-            The exact value is shown as text beside the ring. */}
-        {Math.floor(percent)}%
+      <span className="absolute inset-0 flex items-center justify-center font-mono text-lg font-medium tabular-nums text-glow">
+        {displayConfidence(confidence)}%
       </span>
     </div>
   );

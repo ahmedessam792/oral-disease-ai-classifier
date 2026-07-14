@@ -19,7 +19,10 @@ export function ImagePreview({
   removeDisabled,
 }: ImagePreviewProps) {
   return (
-    <figure className="relative flex h-full flex-col">
+    // absolute inset-0, not h-full: the viewing surface is sized by min-height,
+    // and a percentage height against an auto-height parent collapses — which
+    // dropped the figcaption on top of the Remove button.
+    <figure className="absolute inset-0 flex flex-col">
       <div className="relative flex-1 overflow-hidden">
         {/* Object URL preview — next/image adds nothing for blob: URLs. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}

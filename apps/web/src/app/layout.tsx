@@ -1,15 +1,30 @@
 import type { Metadata } from "next";
-import { Instrument_Sans, Spline_Sans_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Sora } from "next/font/google";
+import { Footer } from "@/components/sections/Footer";
+import { Header } from "@/components/sections/Header";
+import { RouteTransition } from "@/components/transition/RouteTransition";
 import "./globals.css";
 
-const instrumentSans = Instrument_Sans({
-  variable: "--font-instrument",
+// Only the weights actually used, latin subset, swap — three variable families.
+const sora = Sora({
+  variable: "--font-sora",
   subsets: ["latin"],
+  weight: ["600", "700"],
+  display: "swap",
 });
 
-const splineSansMono = Spline_Sans_Mono({
-  variable: "--font-spline-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -26,9 +41,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${instrumentSans.variable} ${splineSansMono.variable} h-full antialiased`}
+      className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <Header />
+        <RouteTransition>{children}</RouteTransition>
+        <Footer />
+      </body>
     </html>
   );
 }

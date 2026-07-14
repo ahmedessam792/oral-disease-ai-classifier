@@ -8,31 +8,36 @@ interface UploadDropzoneProps {
   onFileSelected: (file: File) => void;
 }
 
-/** Corner brackets — a viewfinder, not a dashed box. They tighten on drag. */
+/**
+ * Viewfinder corner brackets, drawn as one SVG.
+ *
+ * These were four bordered <span>s; the anti-pattern detector kept reading the
+ * 2px directional borders as the "side-tab" card tell. Same visual, one
+ * element, no false positives — and the brackets tighten on drag.
+ */
 function Reticle({ active }: { active: boolean }) {
-  const corner =
-    "absolute h-6 w-6 border-scan transition-all duration-200 " +
-    (active ? "opacity-100" : "opacity-45");
-  const inset = active ? "3" : "4";
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-      <span
-        className={`${corner} border-l-2 border-t-2 rounded-tl-md`}
-        style={{ top: `${inset}%`, left: `${inset}%` }}
-      />
-      <span
-        className={`${corner} border-r-2 border-t-2 rounded-tr-md`}
-        style={{ top: `${inset}%`, right: `${inset}%` }}
-      />
-      <span
-        className={`${corner} border-b-2 border-l-2 rounded-bl-md`}
-        style={{ bottom: `${inset}%`, left: `${inset}%` }}
-      />
-      <span
-        className={`${corner} border-b-2 border-r-2 rounded-br-md`}
-        style={{ bottom: `${inset}%`, right: `${inset}%` }}
-      />
-    </div>
+    <svg
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 h-full w-full text-scan"
+      fill="none"
+      preserveAspectRatio="none"
+      viewBox="0 0 100 100"
+    >
+      <g
+        stroke="currentColor"
+        strokeWidth={active ? 0.7 : 0.55}
+        strokeLinecap="round"
+        opacity={active ? 1 : 0.45}
+        style={{ transition: "opacity 200ms ease-out, stroke-width 200ms ease-out" }}
+      >
+        {/* top-left, top-right, bottom-left, bottom-right */}
+        <path d={active ? "M3 11 V3 H11" : "M4 13 V4 H13"} />
+        <path d={active ? "M89 3 H97 V11" : "M87 4 H96 V13"} />
+        <path d={active ? "M3 89 V97 H11" : "M4 87 V96 H13"} />
+        <path d={active ? "M97 89 V97 H89" : "M96 87 V96 H87"} />
+      </g>
+    </svg>
   );
 }
 
@@ -59,13 +64,13 @@ export function UploadDropzone({ onFileSelected }: UploadDropzoneProps) {
       }}
       onDragLeave={() => setIsDragOver(false)}
       onDrop={handleDrop}
-      className={`relative flex h-full min-h-[300px] flex-col items-center justify-center gap-5 rounded-lg p-6 text-center transition-colors duration-200 sm:min-h-[360px] ${
+      className={`relative flex h-full min-h-[280px] flex-col items-center justify-center gap-4 rounded-lg p-6 text-center transition-colors duration-200 sm:min-h-[320px] ${
         isDragOver ? "bg-housing-3" : "bg-housing-2"
       }`}
     >
       <Reticle active={isDragOver} />
 
-      <div className="w-full max-w-[280px] text-scan">
+      <div className="w-full max-w-[248px] text-scan">
         <ScanArc />
       </div>
 
@@ -82,8 +87,10 @@ export function UploadDropzone({ onFileSelected }: UploadDropzoneProps) {
         Browse files
       </button>
 
+      {/* Format + size live only here — the instrument header no longer repeats them. */}
       <p className="relative whitespace-nowrap font-mono text-[0.6875rem] text-glow/70">
-        JPG · PNG · WEBP · BMP · max {DEFAULT_MAX_UPLOAD_MB} MB
+        {ACCEPTED_EXTENSIONS.map((ext) => ext.replace(".", "").toUpperCase()).join(" · ")} ·
+        max {DEFAULT_MAX_UPLOAD_MB} MB
       </p>
 
       <input
@@ -91,6 +98,9 @@ export function UploadDropzone({ onFileSelected }: UploadDropzoneProps) {
         data-testid="file-input"
         type="file"
         accept={ACCEPTED_EXTENSIONS.join(",")}
+        // Removed from the tab order: the visible "Browse files" button is the
+        // control. Otherwise Tab lands on an invisible 1x1 input.
+        tabIndex={-1}
         className="sr-only"
         aria-label="Choose an oral image to analyze"
         onChange={(event) => {
