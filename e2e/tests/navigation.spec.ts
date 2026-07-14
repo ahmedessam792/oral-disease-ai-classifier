@@ -1,29 +1,29 @@
 /**
- * Route-level navigation: the Title Settle transition, the About page, and the
- * accessibility contract around them.
+ * Route-level navigation: the About page, the simplified homepage, and the
+ * accessibility contract around navigating between them.
+ *
+ * There is deliberately no page-transition overlay to assert. The old "Title
+ * Settle" curtain was removed; navigation now swaps content with a 180ms
+ * crossfade that never covers or delays it. What still matters — and what is
+ * tested here — is that the title, focus, and announcement follow the route.
  */
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import { chooseFile } from "../helpers/upload";
 
-test.describe("Title Settle route transition", () => {
-  test("shows the destination title, then reveals the page", async ({ page }) => {
+test.describe("route navigation", () => {
+  test("navigates without any overlay covering the page", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByTestId("route-curtain")).toHaveCount(0); // never on cold load
 
-    // The curtain only lives ~700ms, so record it as it happens rather than
-    // racing to catch it with a poll.
+    // Watch for anything full-screen mounting over the content during the
+    // navigation. Nothing should: content is never occluded.
     await page.evaluate(() => {
-      const win = window as unknown as { __curtain?: { seen: boolean; text: string; hidden: string | null } };
-      win.__curtain = { seen: false, text: "", hidden: null };
+      const win = window as unknown as { __overlay?: boolean };
+      win.__overlay = false;
       new MutationObserver(() => {
-        const el = document.querySelector('[data-testid="route-curtain"]');
-        if (el && !win.__curtain!.seen) {
-          win.__curtain = {
-            seen: true,
-            text: el.textContent ?? "",
-            hidden: el.getAttribute("aria-hidden"),
-          };
+        for (const el of document.querySelectorAll("body > div, body > *")) {
+          const style = getComputedStyle(el as Element);
+          if (style.position === "fixed" && style.inset === "0px") win.__overlay = true;
         }
       }).observe(document.body, { childList: true, subtree: true });
     });
@@ -33,20 +33,13 @@ test.describe("Title Settle route transition", () => {
       .getByRole("link", { name: "About" })
       .click();
 
-    // The destination content is there…
     await expect(page.getByRole("heading", { level: 1, name: "About Arcus" })).toBeVisible();
     await expect(page).toHaveURL(/\/about$/);
 
-    // …and the curtain carried the destination's name, hidden from assistive tech.
-    const curtain = await page.evaluate(
-      () => (window as unknown as { __curtain: { seen: boolean; text: string; hidden: string | null } }).__curtain,
+    const overlay = await page.evaluate(
+      () => (window as unknown as { __overlay: boolean }).__overlay,
     );
-    expect(curtain.seen).toBe(true);
-    expect(curtain.text).toContain("About Arcus");
-    expect(curtain.hidden).toBe("true");
-
-    // …then it clears itself.
-    await expect(page.getByTestId("route-curtain")).toHaveCount(0, { timeout: 3000 });
+    expect(overlay, "no full-screen overlay may mount during a route change").toBe(false);
   });
 
   test("updates the document title and moves focus to the destination heading", async ({ page }) => {
@@ -81,24 +74,44 @@ test.describe("Title Settle route transition", () => {
     await expect(page.getByRole("heading", { level: 1, name: "About Arcus" })).toBeVisible();
   });
 
-  test("does NOT run for in-page interactions (upload)", async ({ page }) => {
+  test("in-page interactions (upload) do not re-run the page transition", async ({ page }) => {
     await page.goto("/");
+    const main = page.locator("main");
     await chooseFile(page);
 
     await expect(page.getByRole("button", { name: "Analyze image" })).toBeVisible();
-    await expect(page.getByTestId("route-curtain")).toHaveCount(0);
+    // <main> is keyed on the pathname: uploading must not remount it.
+    await expect(main).toHaveCount(1);
   });
 });
 
 test.describe("reduced motion", () => {
-  test("navigates with no curtain and no delay", async ({ page }) => {
+  test("navigates with no animation and no delay", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
     await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "About" }).click();
 
-    // No overlay is mounted at all under reduced motion.
-    await expect(page.getByTestId("route-curtain")).toHaveCount(0);
     await expect(page.getByRole("heading", { level: 1, name: "About Arcus" })).toBeVisible();
+    await expect(page.locator("main")).toHaveCSS("opacity", "1");
+  });
+});
+
+test.describe("homepage", () => {
+  test("is simplified: no trust chips, no long explainer", async ({ page }) => {
+    await page.goto("/");
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: /Upload an oral image/ }),
+    ).toBeVisible();
+
+    // The three chips are gone and are not replaced by another chip row.
+    for (const chip of ["In-memory only", "Never stored", "Educational use"]) {
+      await expect(page.getByText(chip, { exact: true })).toHaveCount(0);
+    }
+
+    // The model is named quietly, and the analyzer is present as the main element.
+    await expect(page.getByText("ResNet50V2 · 6 classes")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Browse files" })).toBeVisible();
   });
 });
 
@@ -116,8 +129,7 @@ test.describe("About page", () => {
       await expect(page.getByRole("heading", { name: heading })).toBeVisible();
     }
 
-    await expect(page.getByText(/Educational and research use only/i).first()).toBeVisible();
-    // The page must state plainly that the output is never a diagnosis.
+    // The page must still state plainly that the output is never a diagnosis.
     await expect(page.getByText(/never a diagnosis/i).first()).toBeVisible();
   });
 
@@ -148,5 +160,23 @@ test.describe("About page", () => {
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
     );
     expect(overflows).toBe(false);
+  });
+});
+
+test.describe("medical wording", () => {
+  // The safety statement stays; the "educational" framing is gone from the UI.
+  for (const path of ["/", "/about"]) {
+    test(`${path} shows no "educational" wording`, async ({ page }) => {
+      await page.goto(path);
+      const body = await page.locator("body").innerText();
+      expect(body).not.toMatch(/educational/i);
+    });
+  }
+
+  test("the safety statement survives in the footer", async ({ page }) => {
+    await page.goto("/");
+    await expect(
+      page.getByText(/not a substitute for professional medical advice/i).first(),
+    ).toBeVisible();
   });
 });

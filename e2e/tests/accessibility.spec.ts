@@ -42,7 +42,7 @@ test.describe("keyboard navigation", () => {
     await expect(page.getByTestId("result-panel")).toBeVisible({ timeout: 30_000 });
 
     // The result is where the keyboard user lands — not back at <body>.
-    await expect(page.getByText("AI classification result")).toBeFocused();
+    await expect(page.getByText("AI classification result", { exact: true })).toBeFocused();
   });
 });
 

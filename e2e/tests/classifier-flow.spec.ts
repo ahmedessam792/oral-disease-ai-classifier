@@ -19,7 +19,7 @@ test.describe("classifier happy path (mock mode)", () => {
     await expect(page.getByTestId("result-panel")).toBeVisible({ timeout: 30_000 });
 
     // Full result contract rendered
-    await expect(page.getByText("AI classification result")).toBeVisible();
+    await expect(page.getByText("AI classification result", { exact: true })).toBeVisible();
     // One confidence figure, rounded down — never a second, disagreeing value.
     await expect(page.getByText(/^\d{1,3}%$/).first()).toBeVisible();
     await expect(page.getByTestId("probability-list").getByRole("listitem")).toHaveCount(4);

@@ -157,9 +157,10 @@ describe("report drawer", () => {
     expect(drawer).toHaveTextContent("50%"); // confidence threshold
     expect(drawer).toHaveTextContent("412 ms");
 
-    // Notices.
+    // Notices. The safety statement survives; the "educational" framing does not.
     expect(drawer).toHaveTextContent(/not a diagnosis/i);
-    expect(drawer).toHaveTextContent(/Educational and research use only/i);
+    expect(drawer).toHaveTextContent(/not a substitute for professional medical advice/i);
+    expect(drawer).not.toHaveTextContent(/educational/i);
     expect(drawer).toHaveTextContent(/Privacy/i);
     expect(drawer).toHaveTextContent(/not re-uploaded/i);
   });
