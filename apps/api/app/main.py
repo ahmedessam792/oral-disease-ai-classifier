@@ -35,8 +35,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app = FastAPI(
         title="Oral Disease AI Classifier API",
         description=(
-            "Educational image-classification API. Not a medical device; "
-            "not a substitute for professional medical advice."
+            "Oral image-classification API. Not a medical device. Arcus provides "
+            "an AI classification result and is not a substitute for professional "
+            "medical advice, diagnosis, or treatment."
         ),
         version="1.0.0",
         lifespan=lifespan,

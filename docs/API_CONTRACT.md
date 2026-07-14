@@ -46,7 +46,7 @@ internals.
   "confidence_threshold": 0.5,
   "max_upload_mb": 10,
   "mock": false,
-  "disclaimer": "Educational and research use only. …"
+  "disclaimer": "Arcus provides an AI classification result and is not a substitute for professional medical advice, diagnosis, or treatment."
 }
 ```
 

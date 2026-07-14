@@ -14,7 +14,7 @@ Upload an oral image, and a trained ResNet50V2 tells you what it predicts, how c
 </div>
 
 > [!WARNING]
-> **Educational and research use only.** Arcus is not a medical device. Its output is **never a diagnosis** and is not a substitute for professional medical advice. If you have concerns about your oral health, consult a dentist or physician.
+> **Arcus is not a medical device.** It provides an AI classification result and is not a substitute for professional medical advice, diagnosis, or treatment. Its output is **never a diagnosis**. If you have concerns about your oral health, consult a dentist or physician.
 
 ---
 

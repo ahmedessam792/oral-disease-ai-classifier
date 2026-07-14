@@ -49,6 +49,6 @@ class HealthResponse(BaseModel):
 
 
 DISCLAIMER = (
-    "Educational and research use only. This system is not a substitute for "
+    "Arcus provides an AI classification result and is not a substitute for "
     "professional medical advice, diagnosis, or treatment."
 )

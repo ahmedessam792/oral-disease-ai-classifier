@@ -38,4 +38,4 @@ Structured logs contain event names, error codes, modes, and counts — never im
 ## Honest limitations
 
 > [!WARNING]
-> This is an educational student project — not HIPAA/GDPR-audited medical software. There is no authentication, no rate limiting beyond the platform's, and free-tier hosting offers no formal data-processing agreement. The UI tells users not to upload identifying images if that concerns them, and results are always framed as educational, never diagnostic.
+> This is a student research project — not HIPAA/GDPR-audited medical software. There is no authentication, no rate limiting beyond the platform's, and free-tier hosting offers no formal data-processing agreement. The UI tells users not to upload identifying images if that concerns them, and results are always framed as an AI classification result, never as a diagnosis.

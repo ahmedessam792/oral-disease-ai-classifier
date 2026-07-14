@@ -54,7 +54,7 @@ export const MODEL_INFO: ModelInfoResponse = {
   max_upload_mb: 10,
   mock: false,
   disclaimer:
-    "Educational and research use only. This system is not a substitute for professional medical advice, diagnosis, or treatment.",
+    "Arcus provides an AI classification result and is not a substitute for professional medical advice, diagnosis, or treatment.",
 };
 
 function renderResult(overrides: Partial<PredictionResponse> = {}) {
