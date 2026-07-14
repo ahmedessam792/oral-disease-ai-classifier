@@ -56,9 +56,20 @@ Thumbs.db
 .idea/
 .vscode/
 
-# --- Claude Code local state ---
-.claude/settings.local.json
-.claude/scheduled_tasks.lock
+# --- Local agent / design tooling (kept on disk, never published) ---
+# These are development aids, not part of the application.
+.claude/
+skills/
+CLAUDE.md
+PRODUCT.md
+DESIGN.md
+claude-code-oral-disease-project-prompt.md
+docs/PROJECT_PLAN.md
+.impeccable/
+# Impeccable also installs a duplicate copy for GitHub Copilot; the real CI
+# workflow under .github/workflows stays tracked.
+.github/skills/
+.github/hooks/
 
 # --- Logs & temp ---
 *.log

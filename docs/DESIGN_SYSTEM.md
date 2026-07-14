@@ -19,35 +19,39 @@ Personality: **a diagnostic instrument, not a document.** Porcelain page, one da
 
 Voice: plain verbs, sentence case, no marketing language. Results are "AI classification result", never a diagnosis. Errors state what happened and what to do next.
 
-## 2. Color
+## 2. Color — "Porcelain & Petrol"
 
 | Token | Hex | Role |
 |---|---|---|
-| `porcelain` | `#f3f5f4` | Page background |
-| `surface` | `#ffffff` | Cards, panels, chips |
-| `ink` | `#14232a` | Primary text |
-| `ink-soft` | `#4d5f68` | Secondary text |
-| `ink-faint` | `#5f6e76` | Mono labels, counters — **lightest text tone allowed** (4.5:1 on white) |
-| `line` / `line-strong` | `#dde3e2` / `#c6d0cf` | Hairlines, borders |
-| `teal` / `teal-deep` | `#1f6f62` / `#17564c` | The only interactive color: CTAs, links, focus |
-| `teal-wash` | `#e7f0ee` | Icon tiles, hover fills |
-| **`scan`** | `#4fd1c5` | **Instrument-only.** Scan/AI affordances: the arc, reticle, ready state, result eyebrow. Never on porcelain — it fails contrast there. |
-| `housing` / `-2` / `-3` | `#10222a` / `#1a333c` / `#24444e` | The instrument body and its panels; footer |
+| `porcelain` | `#f4f6f5` | Page background |
+| `surface` | `#ffffff` | Panels, chips |
+| `ink` | `#101e24` | Primary text |
+| `ink-soft` | `#4b5d66` | Secondary text |
+| `ink-faint` | `#5c6d75` | Mono labels — **lightest text tone allowed** (≥4.5:1 on white) |
+| `line` / `line-strong` | `#dce3e1` / `#c4cfcc` | Hairlines, borders |
+| `teal` / `teal-deep` | `#146f63` / `#0f584e` | The only interactive color: CTAs, links, focus |
+| `teal-wash` | `#e6f0ee` | Icon tiles, hover fills |
+| **`scan`** | `#5fe3d3` | **Instrument-only.** Scan/AI affordances: the arc, reticle, ready state, result eyebrow. Never on porcelain — it fails contrast there. |
+| `housing` / `-2` / `-3` | `#0e1f26` / `#17313a` / `#21454f` | The instrument body and its panels; footer |
 | `glow` | `#f2f7f6` | Text and lit surfaces inside the housing |
 | `rose` | `#bf6272` | Marking color: the predicted class only (confidence ring + its bar) |
-| `warn` / `warn-ink` | `#b97e24` / `#855a12` | Mock/caution — `warn` on housing, `warn-ink` on light surfaces (AA) |
-| `error` | `#c0503f` | Error states |
+| `success` | `#1f7a4c` | Positive status |
+| `warn` / `warn-ink` | `#d19a3c` / `#8a5a12` | Mock/caution — `warn` on housing, `warn-ink` on light surfaces (AA) |
+| `error` / `error-ink` | `#b4483a` / `#a03f32` | Error states |
 
 Rules: teal is the only interactive color; rose never exceeds ~2% of a viewport; the housing palette appears only in the instrument and footer. **All text ≥ 4.5:1** — on the housing, never fall below `/70` opacity (axe scans enforce this).
 
 ## 3. Typography
 
-| Role | Face | Usage |
-|---|---|---|
-| Display + UI | **Instrument Sans** (400/500/600) | Headlines, body, controls |
-| Data | **Spline Sans Mono** (400/500) | Eyebrows, percentages, class labels, model IDs, specs |
+| Role | Face | Weights | Usage |
+|---|---|---|---|
+| Display | **Sora** | 600, 700 | `h1`–`h3` only |
+| Body + UI | **Inter** | 400, 500, 600 | Paragraphs, controls, forms |
+| Data | **JetBrains Mono** | 400, 500 | Percentages, class labels, model IDs, timestamps, specs |
 
-No serif. Scale: `h1 1.875→2.75rem` (clamped by breakpoint) · `h2 1.25rem` · `body 1rem/1.6` · `small 0.875rem` · `mono label 0.6875rem, tracking 0.16em, uppercase`. Headline tracking `-0.02em`, max 17ch. Prose max 52–62ch. Numbers use `tabular-nums`.
+Loaded with `next/font` (self-hosted, `latin` subset, `display: swap`), seven weights total. Pairing is on a real contrast axis — geometric display against a neutral grotesque UI face — with mono reserved strictly for values. No serif.
+
+Scale: `h1 1.75→2.5rem` by breakpoint · `h2 1.25rem` · `body 1rem/1.6` · `small 0.875rem` · `mono label 0.6875rem, tracking 0.14em, uppercase`. Headline tracking `-0.02em`, max 17ch. Prose max 50–62ch. Numbers use `tabular-nums`.
 
 ## 4. Space, radius, elevation
 
@@ -58,6 +62,26 @@ No serif. Scale: `h1 1.875→2.75rem` (clamped by breakpoint) · `h2 1.25rem` ·
 ## 5. Iconography
 
 Lucide, 1.75px stroke, 14–22px, `currentColor`. Always paired with text, except the remove-image control (which has an `aria-label`). No emoji.
+
+## 5b. Routes and the page-intro transition
+
+Two route-level destinations: `/` (**Analyze**) and `/about` (**About Arcus**). There is no `/model` route — model detail lives inside About.
+
+**Title Settle** (`components/transition/RouteTransition.tsx`) plays on route change only:
+
+1. a porcelain panel wipes down over the page (`clip-path`, 180ms),
+2. the destination's name holds, large, in the display face (200ms),
+3. the panel wipes away while the title scales down and rises out, and the page fades in beneath it (260ms).
+
+**~640ms total**, `ease-out-expo`. Transform / opacity / clip-path only. It never fires on cold load, and never for in-page interactions — uploading, analyzing, opening the report drawer, or expanding an accordion do not change the path.
+
+Accessibility: the overlay is `aria-hidden` (it is decoration); the document title updates, a polite live region announces the route, and focus moves to the destination `<h1>`. Under `prefers-reduced-motion` no overlay mounts at all and navigation is not delayed.
+
+## 5c. The report drawer
+
+A right-side drawer ≥768px, a full-screen sheet below, built on a native modal `<dialog>` — focus trapping, Escape, and page inertness come from the platform rather than a hand-rolled trap; focus returns to the trigger on close. Its own 220ms panel animation; the route transition is never involved. Contents mount only while open. Print styles render it on white with controls removed.
+
+The PDF is generated client-side with a lazily-imported `jsPDF`: the image is re-drawn from the in-memory object URL through a canvas (which strips EXIF), so it is **never re-uploaded and never stored**.
 
 ## 6. Motion — four moments, CSS only
 
