@@ -6,6 +6,7 @@
 
 Upload an oral image, and a trained ResNet50V2 tells you what it predicts, how confident it is, and the probability it assigned to *every* class it knows.
 
+[![CI](https://github.com/ahmedessam792/oral-disease-ai-classifier/actions/workflows/ci.yml/badge.svg)](https://github.com/ahmedessam792/oral-disease-ai-classifier/actions/workflows/ci.yml)
 [![Frontend](https://img.shields.io/badge/frontend-Next.js-000)](apps/web)
 [![API](https://img.shields.io/badge/API-FastAPI-009485)](apps/api)
 [![Model](https://img.shields.io/badge/model-ResNet50V2-FF6F00)](model/README.md)
@@ -22,10 +23,11 @@ Upload an oral image, and a trained ResNet50V2 tells you what it predicts, how c
 
 | | |
 |---|---|
-| **Web app** | _Coming soon_ |
-| **API** | _Coming soon_ |
+| **Web app** | [oral-disease-ai-classifier.vercel.app](https://oral-disease-ai-classifier.vercel.app) |
+| **API docs** | [arcus-api-210946280781.europe-west1.run.app/docs](https://arcus-api-210946280781.europe-west1.run.app/docs) |
+| **API health** | [arcus-api-210946280781.europe-west1.run.app/health](https://arcus-api-210946280781.europe-west1.run.app/health) |
 
-Not deployed yet. Run it locally in two commands — see [Quick start](#quick-start).
+The backend scales to zero when idle, so the first request after a period of inactivity may take longer while it wakes up and reloads the model. To run everything locally instead, see [Quick start](#quick-start).
 
 ## Preview
 
@@ -72,7 +74,7 @@ Class names, input size, and the pixel range are read from `model/class_config.j
 ```mermaid
 flowchart LR
     U[Browser] -->|HTTPS| W[Next.js · Vercel]
-    W -->|POST /api/v1/predict| A[FastAPI · Docker]
+    W -->|POST /api/v1/predict| A[FastAPI · Cloud Run]
     A --> AD{ModelAdapter}
     AD -->|default| TF[ResNet50V2 · TensorFlow]
     AD -->|dev only, explicit| MK[Mock predictor]
@@ -178,11 +180,23 @@ Full detail: [docs/SECURITY_AND_PRIVACY.md](docs/SECURITY_AND_PRIVACY.md)
 
 ## Deployment
 
-Planned: **Vercel** for the frontend, **Hugging Face Spaces** (Docker) for the API and model — a ~350 MB model plus TensorFlow needs real memory and must not run in a serverless function. Nothing is deployed yet. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+| Layer | Platform |
+|---|---|
+| Frontend | **Vercel** |
+| Backend | **Google Cloud Run** (Docker, `europe-west1`) |
+| Container registry | **Google Artifact Registry** |
+| Model | Baked into the container image at build time — the ~350 MB weight is never downloaded at runtime and is never stored in this GitHub repository |
+| Runtime mode | `MODEL_MODE=real` — the real ResNet50V2 is the only mode served in production; a load failure is reported, never silently masked |
+
+Cloud Run scales to zero when idle (`min-instances: 0`), so **the first request after a period of inactivity pays a cold start** — pulling the image, importing TensorFlow, and loading the model — before it answers. A warm instance responds in under a second.
+
+Production CORS allows only the deployed Vercel origin — no wildcard, and preview deployments are intentionally excluded from the allowlist.
+
+Full settings and manual deployment steps: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Project status
 
-The application is complete and verified: the real model is integrated and is the default inference path, and the frontend, API, Docker setup, and test suites all pass. Deployment is the remaining step.
+Complete and deployed: the real model is integrated as the default inference path, the frontend, API, Docker setup, and test suites all pass, and the application is live in production (see [Live demo](#live-demo)).
 
 ## Author
 

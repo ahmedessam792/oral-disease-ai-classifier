@@ -13,7 +13,7 @@ A stateless two-service system: a static-friendly Next.js frontend and a FastAPI
 ```mermaid
 flowchart LR
     U[Browser] -->|HTTPS| W[Next.js<br/>Vercel]
-    W -->|"POST /api/v1/predict (multipart)"| A[FastAPI<br/>HF Spaces Docker]
+    W -->|"POST /api/v1/predict (multipart)"| A[FastAPI<br/>Cloud Run Docker]
     W -->|GET /api/v1/model/info| A
     subgraph A2 [FastAPI container]
         direction TB
@@ -116,6 +116,6 @@ See [DEPLOYMENT.md](DEPLOYMENT.md).
 ```mermaid
 flowchart LR
     U[Users] --> V[Vercel CDN<br/>Next.js static + SSR]
-    V -->|browser calls API directly| HF[Hugging Face Space<br/>Docker, port 7860]
-    HF --> MODEL[model/ files<br/>uploaded to the Space]
+    V -->|browser calls API directly| CR[Google Cloud Run<br/>Docker, port 7860]
+    CR --> MODEL[model/ files<br/>baked into the image]
 ```

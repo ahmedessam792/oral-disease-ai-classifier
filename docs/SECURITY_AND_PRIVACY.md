@@ -27,7 +27,7 @@ Structured logs contain event names, error codes, modes, and counts — never im
 
 - CORS origins come from `CORS_ORIGINS` (comma-separated allowlist). The app **refuses to start** in production with a wildcard.
 - Only `GET` and `POST` are allowed; credentials are disabled.
-- Production traffic rides Vercel/Hugging Face TLS.
+- Production traffic rides Vercel/Google Cloud Run TLS.
 
 ## Secrets & repo hygiene
 
